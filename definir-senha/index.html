@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Definir senha — Mundo da Mamãe</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sage:#7a8b6f; --sage-d:#5f6f56; --cream:#fdf8f2; --cream-2:#f6ece0;
+    --blush:#e9b8a8; --blush-d:#d99a86; --ink:#3a3a36; --muted:#7b7b72;
+    --red:#c0392b; --white:#fff; --line:#ece1d4;
+    --shadow:0 12px 36px rgba(95,111,86,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Nunito',sans-serif;color:var(--ink);background:radial-gradient(120% 90% at 50% 0%,#fff,var(--cream) 50%,var(--cream-2));min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  h1{font-family:'Fraunces',serif;letter-spacing:-.01em}
+  .card{background:var(--white);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);max-width:440px;width:100%;padding:42px 34px;text-align:center}
+  .logo{width:84px;height:84px;border-radius:50%;background:var(--cream-2);border:2px solid var(--blush);display:grid;place-items:center;font-size:42px;margin:0 auto 18px}
+  .sub{font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--blush-d);font-weight:800;margin-bottom:10px}
+  h1{font-size:26px;color:var(--sage-d);margin-bottom:6px}
+  p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:22px}
+  .field{text-align:left;margin-bottom:14px}
+  .field label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px}
+  .field input{width:100%;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;font-family:'Nunito';background:var(--cream);color:var(--ink);outline:none;transition:border-color .15s}
+  .field input:focus{border-color:var(--sage)}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,var(--sage),var(--sage-d));color:#fff;font-weight:800;padding:14px 26px;border-radius:99px;font-size:15px;box-shadow:0 8px 20px rgba(95,111,86,.35);border:none;cursor:pointer;width:100%;font-family:'Nunito'}
+  .btn:hover{transform:translateY(-2px)}
+  .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+  .alert{border-radius:12px;padding:12px 16px;font-size:14px;font-weight:600;margin-bottom:16px;text-align:left;display:none}
+  .alert.error{background:#fdf0ef;border:1px solid #e8b4b0;color:var(--red)}
+  .alert.success{background:#eef2ea;border:1px solid var(--sage);color:var(--sage-d)}
+  .alert.show{display:block}
+  @media(max-width:480px){.card{padding:32px 24px}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🔐</div>
+  <div class="sub">Mundo da Mamãe</div>
+  <h1>Criar sua senha</h1>
+  <p>Escolha uma senha para acessar o Espaço da Maternidade sempre que quiser.</p>
+  <div id="alertBox" class="alert error"></div>
+  <div class="field">
+    <label>Nova senha</label>
+    <input id="pwd1" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+  </div>
+  <div class="field">
+    <label>Confirmar senha</label>
+    <input id="pwd2" type="password" placeholder="Repita a senha" autocomplete="new-password">
+  </div>
+  <button class="btn" id="saveBtn" onclick="savePassword()">Salvar e entrar →</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  const SUPABASE_URL      = "SUPABASE_URL_PLACEHOLDER";
+  const SUPABASE_ANON_KEY = "SUPABASE_ANON_KEY_PLACEHOLDER";
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // O Supabase redireciona com o token na URL — a biblioteca lida automaticamente
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
+      // usuário autenticado via token do convite ou reset — pronto para definir senha
+    }
+  });
+
+  async function savePassword() {
+    const pwd1 = document.getElementById("pwd1").value;
+    const pwd2 = document.getElementById("pwd2").value;
+
+    if (pwd1.length < 6) return showAlert("error", "A senha precisa ter pelo menos 6 caracteres.");
+    if (pwd1 !== pwd2)   return showAlert("error", "As senhas não conferem.");
+
+    document.getElementById("saveBtn").disabled    = true;
+    document.getElementById("saveBtn").textContent = "Salvando…";
+
+    const { error } = await sb.auth.updateUser({ password: pwd1 });
+
+    if (error) {
+      document.getElementById("saveBtn").disabled    = false;
+      document.getElementById("saveBtn").textContent = "Salvar e entrar →";
+      return showAlert("error", "Não foi possível salvar a senha. O link pode ter expirado — solicite um novo.");
+    }
+
+    showAlert("success", "Senha criada com sucesso! Redirecionando…");
+    setTimeout(() => { window.location.href = "/area"; }, 1500);
+  }
+
+  function showAlert(type, msg) {
+    const el    = document.getElementById("alertBox");
+    el.className = `alert ${type} show`;
+    el.textContent = msg;
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") savePassword();
+  });
+</script>
+</body>
+</html>
