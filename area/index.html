@@ -348,31 +348,43 @@
   let checklistState = {};
 
   // ─── ITENS DO CHECKLIST ────────────────────────────────────
+  // 30 itens do PDF "Checklist — 30 Itens Indispensáveis" (páginas 20-21)
   const CHECKLIST_ITEMS = [
-    // Mala da Mamãe
-    { key:"mae_docs",        label:"Documentos (RG, cartão do plano, caderneta pré-natal)",  group:"Mala da Mamãe" },
-    { key:"mae_pijama",      label:"Pijama ou camisola (2 peças)",                           group:"Mala da Mamãe" },
-    { key:"mae_sutia",       label:"Sutiã de amamentação (2 peças)",                         group:"Mala da Mamãe" },
-    { key:"mae_absorvente",  label:"Absorvente noturno / pós-parto",                         group:"Mala da Mamãe" },
-    { key:"mae_roupa_saida", label:"Roupa confortável para a saída",                         group:"Mala da Mamãe" },
-    { key:"mae_chinelo",     label:"Chinelo fechado antiderrapante",                         group:"Mala da Mamãe" },
-    { key:"mae_necessaire",  label:"Necessaire com itens de higiene pessoal",                group:"Mala da Mamãe" },
-    { key:"mae_snack",       label:"Lanchinhos e bebidas para o trabalho de parto",          group:"Mala da Mamãe" },
-    // Mala do Bebê
-    { key:"bebe_body",       label:"Bodies (4 peças, tamanho RN e P)",                       group:"Mala do Bebê" },
-    { key:"bebe_macacao",    label:"Macacões (2 peças)",                                     group:"Mala do Bebê" },
-    { key:"bebe_manta",      label:"Manta de malha",                                         group:"Mala do Bebê" },
-    { key:"bebe_toalha",     label:"Toalha de fralda com capuz",                             group:"Mala do Bebê" },
-    { key:"bebe_fralda",     label:"Pacote de fraldas RN",                                   group:"Mala do Bebê" },
-    { key:"bebe_saida",      label:"Roupinha de saída da maternidade",                       group:"Mala do Bebê" },
-    { key:"bebe_meinha",     label:"Meiinhas (3 pares)",                                     group:"Mala do Bebê" },
-    { key:"bebe_touca",      label:"Touca de algodão",                                       group:"Mala do Bebê" },
-    // Acompanhante
-    { key:"ac_roupa",        label:"Roupa confortável (2 trocas)",                           group:"Acompanhante" },
-    { key:"ac_carregador",   label:"Carregador de celular e cabo",                           group:"Acompanhante" },
-    { key:"ac_lanche",       label:"Lanche (barrinhas, biscoito, frutas)",                   group:"Acompanhante" },
-    { key:"ac_docs",         label:"Documentos do acompanhante (RG)",                        group:"Acompanhante" },
-    { key:"ac_travesseiro",  label:"Travesseiro e cobertor (para noite no hospital)",         group:"Acompanhante" },
+    // Roupas do Bebê
+    { key:"r_body_mc",       label:"Body manga curta (6 un.)",                               group:"Roupas do Bebê" },
+    { key:"r_body_ml",       label:"Body manga longa (6 un.)",                               group:"Roupas do Bebê" },
+    { key:"r_macacao_pe",    label:"Macacão com pé (6 un.)",                                 group:"Roupas do Bebê" },
+    { key:"r_meias",         label:"Meias (6 pares)",                                        group:"Roupas do Bebê" },
+    { key:"r_touca",         label:"Touca de algodão (3 un.)",                               group:"Roupas do Bebê" },
+    { key:"r_luvas",         label:"Luvas antiarranhão (3 pares)",                           group:"Roupas do Bebê" },
+    { key:"r_manta",         label:"Manta de algodão (2 un.)",                               group:"Roupas do Bebê" },
+    { key:"r_saida_mat",     label:"Saída de maternidade (1 conjunto)",                      group:"Roupas do Bebê" },
+    // Higiene e Saúde
+    { key:"h_fralda",        label:"Fraldas descartáveis RN e P",                            group:"Higiene e Saúde" },
+    { key:"h_lencos",        label:"Lenços umedecidos sem perfume",                          group:"Higiene e Saúde" },
+    { key:"h_creme_ass",     label:"Creme preventivo de assaduras",                          group:"Higiene e Saúde" },
+    { key:"h_algodao",       label:"Algodão hidrófilo (2 pacotes)",                          group:"Higiene e Saúde" },
+    { key:"h_sabonete",      label:"Sabonete líquido neutro para bebê",                      group:"Higiene e Saúde" },
+    { key:"h_shampoo",       label:"Shampoo suave sem lágrimas",                             group:"Higiene e Saúde" },
+    { key:"h_toalha",        label:"Toalha com capuz (2 unidades)",                          group:"Higiene e Saúde" },
+    { key:"h_banheira",      label:"Banheira com suporte anatômico",                         group:"Higiene e Saúde" },
+    { key:"h_termometro",    label:"Termômetro clínico digital",                             group:"Higiene e Saúde" },
+    { key:"h_aspirador",     label:"Aspirador nasal tipo pera",                              group:"Higiene e Saúde" },
+    { key:"h_tesoura",       label:"Tesourinha de ponta arredondada",                        group:"Higiene e Saúde" },
+    { key:"h_soro",          label:"Soro fisiológico 0,9%",                                  group:"Higiene e Saúde" },
+    // Amamentação
+    { key:"a_mamadeira",     label:"Mamadeira anticólica (2 un.)",                           group:"Amamentação" },
+    { key:"a_chupeta",       label:"Chupeta ortodôntica (2 un.)",                            group:"Amamentação" },
+    { key:"a_almofada",      label:"Almofada de amamentação",                                group:"Amamentação" },
+    { key:"a_absorvente",    label:"Absorvente para seios (2 caixas)",                       group:"Amamentação" },
+    // Quarto e Berço
+    { key:"q_berco",         label:"Berço certificado com colchão firme",                    group:"Quarto e Berço" },
+    { key:"q_lencol",        label:"Lençol de berço com elástico (3 un.)",                   group:"Quarto e Berço" },
+    // Passeio e Transporte
+    { key:"p_cadeirinha",    label:"Cadeirinha veicular com selo INMETRO",                   group:"Passeio e Transporte" },
+    { key:"p_carrinho",      label:"Carrinho de bebê reclinável",                            group:"Passeio e Transporte" },
+    { key:"p_mochila",       label:"Mochila maternidade organizada",                         group:"Passeio e Transporte" },
+    { key:"p_babador",       label:"Babador / fralda de boca (8 unidades)",                  group:"Passeio e Transporte" },
   ];
 
   // ─── INICIALIZAÇÃO ─────────────────────────────────────────
