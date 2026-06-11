@@ -374,13 +374,32 @@
     <!-- CONFIGURAÇÕES -->
     <section id="sec-config" class="sec">
       <div class="sec-h"><h3>⚙️ Minhas informações</h3></div>
-      <div class="cfg-card">
-        <div class="cfg-row"><span>Como ser chamada</span>          <strong id="cfg-nickname">—</strong></div>
-        <div class="cfg-row"><span>Nome do bebê</span>              <strong id="cfg-babyname">—</strong></div>
-        <div class="cfg-row"><span>Última menstruação (DUM)</span>  <strong id="cfg-dum">—</strong></div>
-        <div class="cfg-row"><span>Data prevista do parto (DPP)</span><strong id="cfg-dpp">—</strong></div>
+
+      <!-- Visualização -->
+      <div id="cfgView">
+        <div class="cfg-card">
+          <div class="cfg-row"><span>Como ser chamada</span>            <strong id="cfg-nickname">—</strong></div>
+          <div class="cfg-row"><span>Nome do bebê</span>                <strong id="cfg-babyname">—</strong></div>
+          <div class="cfg-row"><span>Última menstruação (DUM)</span>    <strong id="cfg-dum">—</strong></div>
+          <div class="cfg-row"><span>Data prevista do parto (DPP)</span><strong id="cfg-dpp">—</strong></div>
+        </div>
+        <button class="btn green" onclick="showCfgEdit()">✏️ Editar minhas informações</button>
       </div>
-      <button class="btn green" onclick="showOnboarding()">✏️ Editar minhas informações</button>
+
+      <!-- Formulário de edição inline -->
+      <div id="cfgEdit" style="display:none">
+        <div class="cfg-card">
+          <div class="field"><label>Como ser chamada</label><input id="cfgNickname" type="text" maxlength="40" autocomplete="off"></div>
+          <div class="field"><label>Nome do bebê</label><input id="cfgBabyName" type="text" maxlength="60" autocomplete="off"></div>
+          <div class="field"><label>Data da última menstruação (DUM)</label><input id="cfgDum" type="date"></div>
+          <div class="field" style="margin-bottom:0"><label>Meses de gestação</label><input id="cfgMonths" type="number" min="0" max="9" placeholder="0 a 9"></div>
+        </div>
+        <div id="cfgAlert" class="alert error"></div>
+        <div style="display:flex;gap:10px;margin-top:4px">
+          <button class="btn btn-back" onclick="hideCfgEdit()" style="flex:0 0 auto;width:auto">← Cancelar</button>
+          <button class="btn green" id="cfgSaveBtn" onclick="saveCfgEdit()">Salvar informações</button>
+        </div>
+      </div>
     </section>
 
   </main>
@@ -547,6 +566,52 @@
     document.getElementById("cfg-babyname").textContent = p.baby_name || "—";
     document.getElementById("cfg-dum").textContent      = fmt(p.last_period_date);
     document.getElementById("cfg-dpp").textContent      = fmt(p.due_date);
+    hideCfgEdit();
+  }
+
+  function showCfgEdit() {
+    const p = userProfile || {};
+    document.getElementById("cfgNickname").value = p.nickname           || "";
+    document.getElementById("cfgBabyName").value = p.baby_name          || "";
+    document.getElementById("cfgDum").value      = p.last_period_date   || "";
+    document.getElementById("cfgMonths").value   = "";
+    document.getElementById("cfgDum").max        = new Date().toISOString().split("T")[0];
+    clearAlert("cfgAlert");
+    document.getElementById("cfgView").style.display = "none";
+    document.getElementById("cfgEdit").style.display = "block";
+  }
+
+  function hideCfgEdit() {
+    document.getElementById("cfgView").style.display = "block";
+    document.getElementById("cfgEdit").style.display = "none";
+  }
+
+  async function saveCfgEdit() {
+    const nickname = document.getElementById("cfgNickname").value.trim();
+    const babyName = document.getElementById("cfgBabyName").value.trim() || "meu bebê";
+    const dumStr   = document.getElementById("cfgDum").value;
+    const months   = parseInt(document.getElementById("cfgMonths").value, 10);
+
+    if (!nickname) return showAlert("cfgAlert", "Informe como podemos te chamar.");
+    if (!dumStr)   return showAlert("cfgAlert", "Informe a data da última menstruação.");
+    if (isNaN(months) || months < 0 || months > 9)
+      return showAlert("cfgAlert", "Informe os meses de gestação (0 a 9).");
+
+    const dueDate = calcDpp(dumStr, months);
+
+    setLoading("cfgSaveBtn", true);
+    const { error } = await sb.from("memberships").update({
+      nickname, baby_name: babyName,
+      last_period_date: dumStr, due_date: dueDate,
+      updated_at: new Date().toISOString(),
+    }).eq("user_id", currentUser.id);
+    setLoading("cfgSaveBtn", false);
+
+    if (error) return showAlert("cfgAlert", "Não foi possível salvar. Tente novamente.");
+
+    userProfile = { ...userProfile, nickname, baby_name: babyName, last_period_date: dumStr, due_date: dueDate };
+    renderDashboard();
+    navTo("config");
   }
 
   // ─── ENTRAR NA PLATAFORMA ──────────────────────────────────
@@ -1030,7 +1095,8 @@
         loginBtn:  "Entrar no meu espaço →",
         forgotBtn: "Enviar link →",
         signupBtn: "Criar conta e entrar →",
-        obSaveBtn: "Entrar no meu espaço →",
+        obSaveBtn:  "Entrar no meu espaço →",
+        cfgSaveBtn: "Salvar informações",
       };
       btn.textContent = customText ?? defaults[id] ?? "Continuar →";
     }
