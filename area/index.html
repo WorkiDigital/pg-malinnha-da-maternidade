@@ -428,6 +428,7 @@
   let savePageTimer = null;
   let checklistState = {};
   let checklistLoaded = false, vitrineLoaded = false;
+  let appVisible = false;
 
   // ─── ITENS DO CHECKLIST ────────────────────────────────────
   // 30 itens do PDF "Checklist — 30 Itens Indispensáveis" (páginas 20-21)
@@ -557,8 +558,9 @@
       return;
     }
 
-    renderDashboard();
     document.getElementById("app").style.display = "flex";
+    appVisible = true;
+    renderDashboard();
   }
 
   // ─── RENDERIZAR PAINEL PERSONALIZADO ──────────────────────
@@ -684,9 +686,7 @@
 
   // ─── ONBOARDING ────────────────────────────────────────────
   function showOnboarding() {
-    // Se o app já está visível (edição), mostra o onboarding como modal por cima
-    // Se não está logado ainda (primeiro acesso), esconde as telas de auth
-    if (document.getElementById("app").style.display !== "flex") {
+    if (!appVisible) {
       hideAllScreens();
     }
     // Pré-preenche os campos com os dados já salvos (edição)
@@ -751,12 +751,13 @@
 
     if (error) return showAlert("obAlert", "Não foi possível salvar. Tente novamente.");
 
-    const isEditing = document.getElementById("app").style.display === "flex";
+    const wasEditing = appVisible;
     userProfile = { ...userProfile, nickname, baby_name: babyName, last_period_date: dumStr, due_date: dueDate };
     document.getElementById("screenOnboarding").classList.add("hidden");
     document.getElementById("app").style.display = "flex";
+    appVisible = true;
     renderDashboard();
-    if (isEditing) navTo("config");
+    if (wasEditing) navTo("config");
   }
 
   // ─── CÁLCULOS DE GESTAÇÃO ──────────────────────────────────
@@ -832,6 +833,7 @@
     checklistLoaded  = false;
     vitrineLoaded    = false;
     checklistState   = {};
+    appVisible       = false;
     document.getElementById("app").style.display = "none";
     showLogin();
   }
