@@ -21,6 +21,7 @@ Plataforma de produto digital vendendo a **Malinha da Maternidade** (checklist P
 | `/` | `index.html` | Página de vendas |
 | `/obrigado` | `obrigado/index.html` | Página pós-compra da Kiwify |
 | `/area` | `area/index.html` | Plataforma de membros (login + leitor) |
+| `/admin` | `admin/index.html` | Painel administrativo (acesso restrito) |
 | `/definir-senha` | `definir-senha/index.html` | Redefinir senha via link de reset |
 
 ---
@@ -64,7 +65,37 @@ Plataforma de produto digital vendendo a **Malinha da Maternidade** (checklist P
 
 - `memberships` — um registro por cliente (`email` único, `status: active | revoked`, `user_id` vinculado após signup)
 - `webhook_events` — log de todos os webhooks recebidos (idempotência via `unique(provider, order_id, event_type)`)
-- `products` — vitrine de produtos (o principal tem `is_main = true`)
+- `products` — vitrine de produtos (`state: for_sale | unlocked | hidden`, `is_active`, `badge`, `sort`)
+- `admins` — usuários admin (`user_id` FK para `auth.users`); função `is_admin()` usada nas RLS
+- `settings` — configurações chave-valor JSON (`welcome`: título/corpo da boas-vindas com `{nome}`; `support`: whatsapp/enabled)
+- `checklist_progress` — progresso do checklist por cliente (`user_id`, `item_key`, `checked`)
+- `support_messages` — mensagens de suporte (`user_id`, `email`, `nickname`, `message`, `status: open|resolved`, `admin_reply`, `replied_at`)
+
+---
+
+## Painel Admin (`/admin`)
+
+- Login com verificação via `sb.rpc("is_admin")` — nega acesso se não estiver na tabela `admins`
+- Admin atual: `malinhadamaternidade@gmail.com`
+- Seções: **Clientes** (lista + revogar/reativar), **Boas-vindas** (editar mensagem dinâmica), **Vitrine** (CRUD de produtos), **Suporte** (chat com clientes), **Configurações** (WhatsApp, novo admin)
+
+---
+
+## Sistema de Suporte
+
+### Área do cliente (`/area` → seção Suporte)
+- FAQ accordion com 5 perguntas estáticas
+- Botão flutuante `💬` fixo no canto inferior direito (aparece após login)
+- Janela de chat pop-up: mensagens do cliente à direita (bolha verde), respostas do suporte à esquerda (bolha creme)
+- Badge de notificação no botão quando há resposta não lida
+- Enter envia; Shift+Enter quebra linha
+
+### Painel admin (`/admin` → seção Suporte)
+- Layout duas colunas: lista de conversas (esquerda) + chat aberto (direita)
+- Filtros: **Em aberto** (conversa tem ≥1 mensagem `open`) / **Resolvidos** (todas `resolved`)
+- Ao clicar numa conversa: abre o histórico completo em bolhas + campo de resposta + botão "✓ Resolvido"
+- "✓ Resolvido" marca **todas** as mensagens abertas da conversa via `.in("id", openIds)`
+- Badge na sidebar com contagem de conversas abertas (carregado silenciosamente ao entrar no admin)
 
 ---
 
