@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compra confirmada — Mundo da Mamãe</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sage:#7a8b6f; --sage-d:#5f6f56; --cream:#fdf8f2; --cream-2:#f6ece0;
+    --blush:#e9b8a8; --blush-d:#d99a86; --ink:#3a3a36; --muted:#7b7b72;
+    --gold:#c9a24b; --white:#fff; --line:#ece1d4;
+    --shadow:0 12px 36px rgba(95,111,86,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Nunito',sans-serif;color:var(--ink);background:radial-gradient(120% 90% at 50% 0%,#fff,var(--cream) 50%,var(--cream-2));min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  h1,h2,h3{font-family:'Fraunces',serif;letter-spacing:-.01em}
+
+  .card{background:var(--white);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);max-width:520px;width:100%;padding:48px 40px;text-align:center}
+
+  .check{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--sage),var(--sage-d));display:grid;place-items:center;margin:0 auto 24px;font-size:36px;box-shadow:0 8px 24px rgba(95,111,86,.35)}
+
+  .sub{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--blush-d);font-weight:800;margin-bottom:10px}
+  h1{font-size:28px;color:var(--sage-d);margin-bottom:12px}
+  .desc{color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:32px}
+
+  /* Steps */
+  .steps{background:var(--cream-2);border-radius:18px;padding:24px;margin-bottom:32px;text-align:left}
+  .steps p{font-size:13px;font-weight:800;color:var(--sage-d);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+  .step{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+  .step:last-child{margin-bottom:0}
+  .step-num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--white);border:2px solid var(--blush);display:grid;place-items:center;font-weight:800;font-size:14px;color:var(--sage-d)}
+  .step-text{font-size:14px;color:var(--ink);line-height:1.5;padding-top:6px}
+  .step-text b{color:var(--sage-d)}
+
+  /* CTA */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(180deg,var(--sage),var(--sage-d));color:#fff;font-family:'Nunito';font-weight:800;font-size:17px;text-decoration:none;padding:18px 36px;border-radius:99px;box-shadow:0 10px 26px rgba(95,111,86,.4);transition:transform .15s;width:100%}
+  .btn:hover{transform:translateY(-2px)}
+  .btn span{font-size:22px}
+
+  .micro{margin-top:14px;font-size:13px;color:var(--muted)}
+
+  footer{margin-top:28px;font-size:12px;color:var(--muted)}
+  footer b{color:var(--sage-d);font-family:'Fraunces';font-style:italic}
+
+  @media(max-width:480px){
+    .card{padding:36px 24px}
+    h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="check">✅</div>
+  <div class="sub">Mundo da Mamãe</div>
+  <h1>Compra confirmada! 💚</h1>
+  <p class="desc">Que alegria ter você aqui, mamãe! Sua <strong>Malinha da Maternidade</strong> está pronta e esperando por você. Siga os passos abaixo para acessar agora:</p>
+
+  <div class="steps">
+    <p>Como acessar seu material</p>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">Clique no botão abaixo para <b>criar sua senha</b> de acesso — use o mesmo e-mail que você usou na compra.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">Defina uma senha e clique em <b>"Criar conta e entrar"</b> — você entra direto na plataforma.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">Abra a <b>Malinha da Maternidade</b> e leia no formato livro animado, no celular ou no computador. 📖</div>
+    </div>
+  </div>
+
+  <a href="https://pg-malinnha-da-maternidade.vercel.app/area?email={email}" class="btn">
+    <span>🔐</span> Criar minha senha e acessar agora
+  </a>
+  <p class="micro">Leva menos de 1 minuto • Acesso imediato e vitalício</p>
+
+  <footer>Malinha da Maternidade • <b>Mundo da Mamãe</b> 🤱</footer>
+</div>
+
+</body>
+</html>
