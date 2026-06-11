@@ -138,45 +138,61 @@
   /* ── SUPORTE ADMIN ── */
   .sb-notify{background:var(--blush);color:#4a2a20;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:auto}
   .sb-item.active .sb-notify{background:rgba(255,255,255,.3);color:#fff}
-  .filter-btns{display:flex;gap:8px;margin-bottom:20px}
-  .filter-btn{background:var(--cream-2);border:1.5px solid var(--line);color:var(--ink);font-size:13px;font-weight:800;padding:9px 20px;border-radius:99px;cursor:pointer;transition:all .15s}
+
+  /* layout duas colunas */
+  .suporte-layout{display:flex;gap:0;height:calc(100vh - 120px);min-height:500px;background:var(--white);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+
+  /* coluna esquerda — lista */
+  .sp-list-col{width:300px;flex-shrink:0;border-right:1px solid var(--line);display:flex;flex-direction:column;background:var(--cream)}
+  .sp-list-header{padding:16px 16px 12px;border-bottom:1px solid var(--line);background:var(--white)}
+  .sp-list-header h4{font-size:15px;color:var(--sage-d);margin-bottom:10px}
+  .filter-btns{display:flex;gap:6px}
+  .filter-btn{background:var(--cream-2);border:1.5px solid var(--line);color:var(--ink);font-size:12px;font-weight:800;padding:7px 14px;border-radius:99px;cursor:pointer;transition:all .15s}
   .filter-btn:hover{background:var(--line)}
   .filter-btn.active{background:var(--sage);border-color:var(--sage-d);color:#fff}
+  .sp-list-body{flex:1;overflow-y:auto}
+  .sp-item{padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s;display:flex;align-items:center;gap:10px}
+  .sp-item:hover{background:var(--cream-2)}
+  .sp-item.active{background:#eef2ea}
+  .sp-av{width:36px;height:36px;border-radius:50%;background:var(--sage);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;flex-shrink:0}
+  .sp-item-info{flex:1;min-width:0}
+  .sp-item-name{font-size:13px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sp-item-preview{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+  .sp-item-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+  .sp-item-date{font-size:10px;color:var(--muted);font-weight:700}
+  .sp-st{padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800}
+  .sp-st.open{background:#fff3e0;color:#c47d00}
+  .sp-st.resolved{background:#eef2ea;color:var(--sage-d)}
+  .sp-empty{text-align:center;color:var(--muted);padding:40px 16px;font-size:13px}
 
-  /* ticket card */
-  .ticket{background:var(--white);border:1px solid var(--line);border-radius:18px;margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .15s}
-  .ticket:hover{box-shadow:0 16px 40px rgba(95,111,86,.18)}
-  .ticket-header{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none}
-  .ticket-av{width:40px;height:40px;border-radius:50%;background:var(--sage);color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px;flex-shrink:0}
-  .ticket-info{flex:1;min-width:0}
-  .ticket-name{font-size:14px;font-weight:800;color:var(--ink)}
-  .ticket-preview{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .ticket-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
-  .ticket-date{font-size:11px;color:var(--muted);font-weight:700}
-  .ticket-st{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800}
-  .ticket-st.open{background:#fff3e0;color:#c47d00}
-  .ticket-st.resolved{background:#eef2ea;color:var(--sage-d)}
-  .ticket-chevron{font-size:12px;color:var(--muted);transition:transform .2s}
-  .ticket.expanded .ticket-chevron{transform:rotate(180deg)}
-
-  /* conversa dentro do ticket */
-  .ticket-body{display:none;border-top:1px solid var(--line);padding:16px 18px 18px;flex-direction:column;gap:10px}
-  .ticket.expanded .ticket-body{display:flex}
-  .conv-bubbles{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-  .cbubble{max-width:78%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5;word-break:break-word}
+  /* coluna direita — chat */
+  .sp-chat-col{flex:1;display:flex;flex-direction:column;min-width:0}
+  .sp-chat-header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;background:var(--white);flex-shrink:0}
+  .sp-chat-header-av{width:38px;height:38px;border-radius:50%;background:var(--sage);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;flex-shrink:0}
+  .sp-chat-header-info{flex:1}
+  .sp-chat-header-info strong{font-size:14px;display:block;color:var(--ink)}
+  .sp-chat-header-info span{font-size:12px;color:var(--muted)}
+  .sp-chat-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--muted);font-size:14px}
+  .sp-chat-empty .sp-chat-empty-icon{font-size:48px;opacity:.3}
+  .sp-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+  .cbubble{max-width:72%;padding:11px 15px;border-radius:18px;font-size:13px;line-height:1.55;word-break:break-word}
   .cbubble.client{background:var(--cream-2);color:var(--ink);align-self:flex-start;border-bottom-left-radius:4px}
   .cbubble.admin{background:var(--sage);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
   .cbubble .cb-label{font-size:10px;font-weight:800;opacity:.7;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
-  .cbubble .cb-time{font-size:10px;opacity:.65;margin-top:4px}
+  .cbubble .cb-time{font-size:10px;opacity:.6;margin-top:5px}
   .cbubble.admin .cb-time{text-align:right}
-
-  /* input de resposta */
-  .ticket-reply{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
-  .ticket-reply textarea{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:13px;font-family:'Nunito';background:var(--cream);color:var(--ink);outline:none;resize:none;min-height:72px;transition:border-color .15s}
-  .ticket-reply textarea:focus{border-color:var(--sage)}
-  .ticket-reply-btns{display:flex;gap:8px;flex-wrap:wrap}
-
-  .msg-empty{text-align:center;color:var(--muted);padding:48px 16px;font-size:14px}
+  .sp-input-area{border-top:1px solid var(--line);padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:var(--white);flex-shrink:0}
+  .sp-input-row{display:flex;gap:10px;align-items:flex-end}
+  .sp-input-row textarea{flex:1;padding:11px 14px;border:1.5px solid var(--line);border-radius:14px;font-size:13px;font-family:'Nunito';background:var(--cream);color:var(--ink);outline:none;resize:none;min-height:44px;max-height:120px;transition:border-color .15s;line-height:1.4}
+  .sp-input-row textarea:focus{border-color:var(--sage)}
+  .sp-send-btn{background:var(--sage);color:#fff;width:42px;height:42px;border-radius:50%;font-size:18px;display:grid;place-items:center;flex-shrink:0;cursor:pointer;transition:background .15s;border:none}
+  .sp-send-btn:hover{background:var(--sage-d)}
+  .sp-send-btn:disabled{opacity:.45;cursor:not-allowed}
+  .sp-resolve-row{display:flex;justify-content:flex-end}
+  @media(max-width:700px){
+    .suporte-layout{flex-direction:column;height:auto}
+    .sp-list-col{width:100%;border-right:none;border-bottom:1px solid var(--line);max-height:220px}
+  }
 </style>
 </head>
 <body>
@@ -286,12 +302,52 @@
     <!-- ── SUPORTE ── -->
     <section id="sec-suporte" class="sec">
       <h2 class="page-title">🎧 Suporte ao cliente</h2>
-      <p class="page-sub">Mensagens enviadas pelas clientes pelo painel delas.</p>
-      <div class="filter-btns">
-        <button id="filterOpen"     class="filter-btn active" onclick="renderSupport('open')">Em aberto</button>
-        <button id="filterResolved" class="filter-btn"        onclick="renderSupport('resolved')">Resolvidos</button>
+      <p class="page-sub" style="margin-bottom:16px">Conversas com clientes em tempo real.</p>
+      <div class="suporte-layout">
+
+        <!-- Lista de conversas -->
+        <div class="sp-list-col">
+          <div class="sp-list-header">
+            <h4>Conversas</h4>
+            <div class="filter-btns">
+              <button id="filterOpen"     class="filter-btn active" onclick="renderSupport('open')">Em aberto</button>
+              <button id="filterResolved" class="filter-btn"        onclick="renderSupport('resolved')">Resolvidos</button>
+            </div>
+          </div>
+          <div class="sp-list-body" id="supportList"></div>
+        </div>
+
+        <!-- Painel de conversa -->
+        <div class="sp-chat-col" id="spChatCol">
+          <!-- estado vazio -->
+          <div class="sp-chat-empty" id="spChatEmpty">
+            <span class="sp-chat-empty-icon">💬</span>
+            <span>Selecione uma conversa</span>
+          </div>
+          <!-- header (oculto até selecionar) -->
+          <div class="sp-chat-header" id="spChatHeader" style="display:none">
+            <div class="sp-chat-header-av" id="spChatAv">R</div>
+            <div class="sp-chat-header-info">
+              <strong id="spChatName"></strong>
+              <span id="spChatEmail"></span>
+            </div>
+            <span id="spChatSt" class="sp-st open" style="margin-left:auto"></span>
+          </div>
+          <!-- mensagens -->
+          <div class="sp-messages" id="spMessages" style="display:none"></div>
+          <!-- input -->
+          <div class="sp-input-area" id="spInputArea" style="display:none">
+            <div class="sp-input-row">
+              <textarea id="spReplyText" placeholder="Digite sua resposta…" rows="1"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();spSendReply()}"
+                oninput="this.style.height='44px';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+              <button class="sp-send-btn" id="spSendBtn" onclick="spSendReply()">➤</button>
+            </div>
+            <div class="sp-resolve-row" id="spResolveRow"></div>
+          </div>
+        </div>
+
       </div>
-      <div id="supportList"></div>
     </section>
 
     <!-- ── CONFIG ── -->
@@ -623,8 +679,9 @@
   }
 
   // ── SUPORTE ───────────────────────────────────────────────
-  let allMessages = [];
+  let allMessages   = [];
   let currentFilter = "open";
+  let activeConvKey = null; // user_id ou email da conversa aberta
 
   async function loadSupportBadgeQuiet() {
     const { count } = await sb
@@ -639,12 +696,15 @@
   async function loadSupport() {
     const { data } = await sb
       .from("support_messages")
-      .select("id, email, nickname, message, status, admin_reply, replied_at, created_at")
-      .order("created_at", { ascending: false });
+      .select("id, user_id, email, nickname, message, status, admin_reply, replied_at, created_at")
+      .order("created_at", { ascending: true });
 
     allMessages = data ?? [];
     updateSupportBadge();
     renderSupport(currentFilter);
+
+    // Reabre a conversa ativa após reload
+    if (activeConvKey) openConv(activeConvKey);
   }
 
   function updateSupportBadge() {
@@ -654,154 +714,175 @@
     else badge.style.display = "none";
   }
 
-  function renderSupport(filter) {
-    currentFilter = filter;
-    document.getElementById("filterOpen").className     = "filter-btn" + (filter === "open"     ? " active" : "");
-    document.getElementById("filterResolved").className = "filter-btn" + (filter === "resolved" ? " active" : "");
-
-    const list = document.getElementById("supportList");
-
-    // Agrupa mensagens por user_id (uma conversa por cliente)
+  // Agrupa mensagens por cliente
+  function groupMessages() {
     const grouped = {};
     allMessages.forEach(m => {
       const key = m.user_id || m.email;
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(m);
     });
+    return grouped;
+  }
 
-    // Filtra conversas: mostra se tem pelo menos 1 mensagem com o status do filtro
-    const convs = Object.values(grouped).filter(msgs =>
+  function renderSupport(filter) {
+    currentFilter = filter;
+    document.getElementById("filterOpen").className     = "filter-btn" + (filter === "open"     ? " active" : "");
+    document.getElementById("filterResolved").className = "filter-btn" + (filter === "resolved" ? " active" : "");
+
+    const grouped = groupMessages();
+    const convs   = Object.entries(grouped).filter(([, msgs]) =>
       msgs.some(m => m.status === filter)
     );
 
+    const list = document.getElementById("supportList");
+
     if (!convs.length) {
-      list.innerHTML = `<div class="msg-empty">${filter === "open" ? "Nenhuma conversa em aberto." : "Nenhuma conversa resolvida ainda."}</div>`;
+      list.innerHTML = `<div class="sp-empty">${filter === "open" ? "Nenhuma conversa em aberto." : "Nenhuma conversa resolvida."}</div>`;
       return;
     }
 
-    const fmtTime = (iso) => iso
-      ? new Date(iso).toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" })
-      : "";
+    // Ordena por última mensagem mais recente
+    convs.sort(([, a], [, b]) => {
+      const la = new Date(a[a.length - 1].created_at);
+      const lb = new Date(b[b.length - 1].created_at);
+      return lb - la;
+    });
 
-    list.innerHTML = convs.map(msgs => {
-      // ordena por data asc dentro da conversa
-      msgs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-
-      const first   = msgs[0];
+    list.innerHTML = convs.map(([key, msgs]) => {
       const last    = msgs[msgs.length - 1];
-      const uid     = first.user_id || first.email;
-      const name    = first.nickname
-        ? `${escHtml(first.nickname)} <span style="font-weight:400;color:var(--muted)">(${escHtml(first.email)})</span>`
-        : escHtml(first.email);
-      const initial = (first.nickname || first.email)[0].toUpperCase();
+      const first   = msgs[0];
+      const name    = first.nickname || first.email;
+      const initial = name[0].toUpperCase();
       const date    = new Date(last.created_at).toLocaleDateString("pt-BR");
-
-      // Status geral: aberto se qualquer mensagem estiver aberta
-      const hasOpen  = msgs.some(m => m.status === "open");
-      const stLabel  = hasOpen ? "Em aberto" : "Resolvido";
-      const stClass  = hasOpen ? "open" : "resolved";
-      const preview  = escHtml(last.message.slice(0, 80) + (last.message.length > 80 ? "…" : ""));
-
-      // Bolhas de toda a conversa
-      const bubbles = msgs.map(m => {
-        const clientBubble = `
-          <div class="cbubble client">
-            <div class="cb-label">Cliente</div>
-            ${escHtmlNl(m.message)}
-            <div class="cb-time">${fmtTime(m.created_at)}</div>
-          </div>`;
-        const adminBubble = m.admin_reply ? `
-          <div class="cbubble admin">
-            <div class="cb-label">Suporte</div>
-            ${escHtmlNl(m.admin_reply)}
-            <div class="cb-time">${fmtTime(m.replied_at)}</div>
-          </div>` : "";
-        return clientBubble + adminBubble;
-      }).join("");
-
-      // Última mensagem sem resposta (para o campo de reply)
-      const lastOpen = [...msgs].reverse().find(m => m.status === "open");
-
-      const replyArea = lastOpen ? `
-        <div class="ticket-reply">
-          <textarea id="reply-${lastOpen.id}" placeholder="Digite sua resposta…"></textarea>
-          <div class="ticket-reply-btns">
-            <button class="btn ghost sm" id="replyBtn-${lastOpen.id}" onclick="sendReply('${lastOpen.id}')">💬 Enviar resposta</button>
-            <button class="btn sm"       id="resolveBtn-${lastOpen.id}" onclick="resolveMessage('${lastOpen.id}')">✓ Resolver</button>
-          </div>
-        </div>` : `
-        <div style="padding-top:10px;border-top:1px solid var(--line)">
-          <span style="font-size:12px;color:var(--sage-d);font-weight:800">✓ Conversa encerrada</span>
-        </div>`;
-
-      const ticketId = "ticket-" + uid.replace(/[^a-zA-Z0-9]/g, "_");
+      const preview = last.message.slice(0, 60) + (last.message.length > 60 ? "…" : "");
+      const hasOpen = msgs.some(m => m.status === "open");
+      const stClass = hasOpen ? "open" : "resolved";
+      const stLabel = hasOpen ? "Em aberto" : "Resolvido";
+      const isActive = activeConvKey === key ? " active" : "";
 
       return `
-        <div class="ticket" id="${ticketId}">
-          <div class="ticket-header" onclick="this.closest('.ticket').classList.toggle('expanded')">
-            <div class="ticket-av">${initial}</div>
-            <div class="ticket-info">
-              <div class="ticket-name">${name}</div>
-              <div class="ticket-preview">${preview}</div>
-            </div>
-            <div class="ticket-right">
-              <span class="ticket-date">${date}</span>
-              <span class="ticket-st ${stClass}">${stLabel}</span>
-            </div>
-            <span class="ticket-chevron">▼</span>
+        <div class="sp-item${isActive}" onclick="openConv('${escHtml(key)}')">
+          <div class="sp-av">${escHtml(initial)}</div>
+          <div class="sp-item-info">
+            <div class="sp-item-name">${escHtml(name)}</div>
+            <div class="sp-item-preview">${escHtml(preview)}</div>
           </div>
-          <div class="ticket-body">
-            <div class="conv-bubbles">${bubbles}</div>
-            ${replyArea}
+          <div class="sp-item-right">
+            <span class="sp-item-date">${date}</span>
+            <span class="sp-st ${stClass}">${stLabel}</span>
           </div>
         </div>`;
     }).join("");
   }
 
-  function toggleTicket(id) {
-    document.getElementById("ticket-" + id).classList.toggle("expanded");
+  function openConv(key) {
+    activeConvKey = key;
+    const grouped = groupMessages();
+    const msgs    = grouped[key];
+    if (!msgs) return;
+
+    // Marca item ativo na lista
+    document.querySelectorAll(".sp-item").forEach(el => el.classList.remove("active"));
+    const items = document.querySelectorAll(".sp-item");
+    items.forEach(el => { if (el.onclick?.toString().includes(key)) el.classList.add("active"); });
+
+    const first   = msgs[0];
+    const name    = first.nickname || first.email;
+    const initial = name[0].toUpperCase();
+    const hasOpen = msgs.some(m => m.status === "open");
+
+    // Header
+    document.getElementById("spChatEmpty").style.display  = "none";
+    document.getElementById("spChatHeader").style.display = "flex";
+    document.getElementById("spMessages").style.display   = "flex";
+    document.getElementById("spInputArea").style.display  = hasOpen ? "block" : "none";
+
+    document.getElementById("spChatAv").textContent    = initial;
+    document.getElementById("spChatName").textContent  = name;
+    document.getElementById("spChatEmail").textContent = first.email;
+    const stEl = document.getElementById("spChatSt");
+    stEl.textContent  = hasOpen ? "Em aberto" : "Resolvido";
+    stEl.className    = "sp-st " + (hasOpen ? "open" : "resolved");
+
+    // Bolhas
+    const fmtTime = iso => iso
+      ? new Date(iso).toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" })
+      : "";
+
+    const msgEl = document.getElementById("spMessages");
+    msgEl.innerHTML = msgs.map(m => {
+      const client = `
+        <div class="cbubble client">
+          <div class="cb-label">Cliente</div>
+          ${escHtmlNl(m.message)}
+          <div class="cb-time">${fmtTime(m.created_at)}</div>
+        </div>`;
+      const admin = m.admin_reply ? `
+        <div class="cbubble admin">
+          <div class="cb-label">Você</div>
+          ${escHtmlNl(m.admin_reply)}
+          <div class="cb-time">${fmtTime(m.replied_at)}</div>
+        </div>` : "";
+      return client + admin;
+    }).join("");
+
+    // Scroll para o fim
+    msgEl.scrollTop = msgEl.scrollHeight;
+
+    // Botão resolver
+    const lastOpen = [...msgs].reverse().find(m => m.status === "open");
+    const resolveRow = document.getElementById("spResolveRow");
+    if (lastOpen) {
+      resolveRow.innerHTML = `<button class="btn ghost sm" id="spResolveBtn" onclick="spResolveConv('${lastOpen.id}')">✓ Marcar como resolvido</button>`;
+      document.getElementById("spReplyText").value = "";
+      document.getElementById("spReplyText").style.height = "44px";
+    } else {
+      resolveRow.innerHTML = "";
+    }
+
+    // Guarda id da última msg aberta no campo de envio
+    document.getElementById("spSendBtn").dataset.msgId = lastOpen?.id ?? "";
+  }
+
+  async function spSendReply() {
+    const text  = document.getElementById("spReplyText").value.trim();
+    const msgId = document.getElementById("spSendBtn").dataset.msgId;
+    if (!text || !msgId) return;
+
+    document.getElementById("spSendBtn").disabled = true;
+
+    const { error } = await sb.from("support_messages").update({
+      admin_reply: text,
+      replied_at:  new Date().toISOString(),
+    }).eq("id", msgId);
+
+    document.getElementById("spSendBtn").disabled = false;
+    if (error) return;
+
+    document.getElementById("spReplyText").value = "";
+    document.getElementById("spReplyText").style.height = "44px";
+    await loadSupport();
+  }
+
+  async function spResolveConv(msgId) {
+    const btn = document.getElementById("spResolveBtn");
+    if (btn) { btn.disabled = true; btn.textContent = "Salvando…"; }
+
+    const reply = document.getElementById("spReplyText").value.trim();
+    await sb.from("support_messages").update({
+      status:      "resolved",
+      admin_reply: reply || null,
+      replied_at:  reply ? new Date().toISOString() : null,
+    }).eq("id", msgId);
+
+    await loadSupport();
   }
 
   function escHtmlNl(str) {
     return String(str ?? "")
       .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
       .replace(/\n/g,"<br>");
-  }
-
-  async function resolveMessage(id) {
-    const reply = document.getElementById("reply-" + id)?.value.trim() ?? "";
-    const btn   = document.getElementById("resolveBtn-" + id);
-    if (btn) { btn.disabled = true; btn.textContent = "Salvando…"; }
-
-    const { error } = await sb.from("support_messages").update({
-      status:      "resolved",
-      admin_reply: reply || null,
-      replied_at:  reply ? new Date().toISOString() : null,
-    }).eq("id", id);
-
-    if (error) {
-      if (btn) { btn.disabled = false; btn.textContent = "✓ Resolver"; }
-      return;
-    }
-    await loadSupport();
-  }
-
-  async function sendReply(id) {
-    const reply = document.getElementById("reply-" + id)?.value.trim() ?? "";
-    if (!reply) return;
-    const btn = document.getElementById("replyBtn-" + id);
-    if (btn) { btn.disabled = true; btn.textContent = "Enviando…"; }
-
-    const { error } = await sb.from("support_messages").update({
-      admin_reply: reply,
-      replied_at:  new Date().toISOString(),
-    }).eq("id", id);
-
-    if (error) {
-      if (btn) { btn.disabled = false; btn.textContent = "💬 Enviar resposta"; }
-      return;
-    }
-    await loadSupport();
   }
 
   // ── CONFIGURAÇÕES ─────────────────────────────────────────
