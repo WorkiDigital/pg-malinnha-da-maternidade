@@ -46,6 +46,16 @@ fbq('track', 'PageView');
 </script>
 -->
 
+<!-- TrackServer Hub - instalação first-party -->
+<script>
+  (function(t,s){
+    window.TS=window.TS||function(){(TS.q=TS.q||[]).push(arguments)};
+    TS('init','d5acd35c-13d7-4ca1-a57a-d88f10ae6805',{ pixelId:'983851214442292', endpoint:'https://malinha-da-maternidade.track.seudominio.com' });
+    var j=document.createElement('script');j.async=1;
+    j.src='https://malinha-da-maternidade.track.seudominio.com/t.js';document.head.appendChild(j);
+  })();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
