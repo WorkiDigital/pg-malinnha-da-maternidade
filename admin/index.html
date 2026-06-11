@@ -834,7 +834,7 @@
     const lastOpen = [...msgs].reverse().find(m => m.status === "open");
     const resolveRow = document.getElementById("spResolveRow");
     if (lastOpen) {
-      resolveRow.innerHTML = `<button class="btn ghost sm" id="spResolveBtn" onclick="spResolveConv('${lastOpen.id}')">✓ Marcar como resolvido</button>`;
+      resolveRow.innerHTML = `<button class="btn ghost sm" id="spResolveBtn" onclick="spResolveConv()" style="font-size:11px;padding:6px 14px">✓ Resolvido</button>`;
       document.getElementById("spReplyText").value = "";
       document.getElementById("spReplyText").style.height = "44px";
     } else {
@@ -865,16 +865,24 @@
     await loadSupport();
   }
 
-  async function spResolveConv(msgId) {
+  async function spResolveConv() {
     const btn = document.getElementById("spResolveBtn");
     if (btn) { btn.disabled = true; btn.textContent = "Salvando…"; }
 
+    // Pega todos os IDs em aberto da conversa ativa
+    const grouped  = groupMessages();
+    const msgs     = grouped[activeConvKey] ?? [];
+    const openIds  = msgs.filter(m => m.status === "open").map(m => m.id);
+    if (!openIds.length) return;
+
     const reply = document.getElementById("spReplyText").value.trim();
+
+    // Resolve todas as mensagens abertas da conversa
     await sb.from("support_messages").update({
       status:      "resolved",
       admin_reply: reply || null,
       replied_at:  reply ? new Date().toISOString() : null,
-    }).eq("id", msgId);
+    }).in("id", openIds);
 
     await loadSupport();
   }
