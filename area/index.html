@@ -659,22 +659,29 @@
   }
 
   // ─── RENDERIZAR PAINEL PERSONALIZADO ──────────────────────
-  function renderDashboard() {
+  async function renderDashboard() {
     const profile  = userProfile;
     const nick     = profile.nickname ?? "mamãe";
     const babyName = profile.baby_name ?? "seu bebê";
 
     document.getElementById("uname").textContent = "Olá, " + nick;
     document.getElementById("uav").textContent   = nick[0].toUpperCase();
-    document.getElementById("helloName").textContent = "Bem-vinda, " + nick + "! 💚";
 
+    // Boas-vindas dinâmica (settings) com fallback para hardcoded
+    const { data: ws } = await sb.from("settings").select("value").eq("key", "welcome").single();
+    const wTitle = (ws?.value?.title ?? "Bem-vinda, {nome}! 💚").replace("{nome}", nick);
+    const wBody  = (ws?.value?.body  ?? "Que alegria ter você aqui. Comece pela sua <b>Malinha da Maternidade</b>. 📖").replace("{nome}", nick);
+    document.getElementById("helloName").textContent    = wTitle;
+    document.getElementById("helloParagraph").innerHTML = wBody;
+    document.getElementById("helloEmoji").textContent   = "🤱";
+
+    // Countdown sobrescreve o texto do settings se tiver data prevista
     if (profile.due_date) {
       const days = calcCountdown(profile.due_date);
       if (days > 0) {
         document.getElementById("helloParagraph").innerHTML =
           `Faltam <b>${days} dia${days !== 1 ? "s" : ""}</b> para conhecer <b>${babyName}</b>. ` +
           `Aproveite para se preparar com calma — você está indo muito bem! 🌿`;
-        document.getElementById("helloEmoji").textContent = "🤱";
       } else {
         document.getElementById("helloParagraph").innerHTML =
           `Seu bebê já chegou! Parabéns, mamãe! Que essa nova fase seja linda e cheia de amor. 🍼`;
@@ -691,25 +698,33 @@
     const { data: products } = await sb
       .from("products")
       .select("*")
-      .eq("is_main", false)
-      .order("sort");
+      .eq("is_active", true)
+      .neq("state", "hidden")
+      .order("sort", { ascending: true });
 
     const vitrine = document.getElementById("vitrine");
     vitrine.innerHTML = "";
-    if (!products?.length) return;
+    if (!products?.length) {
+      vitrine.innerHTML = `<p style="color:var(--muted);font-size:14px;padding:8px 4px">Novos produtos em breve!</p>`;
+      return;
+    }
 
     const covers = ["c2", "c3", "c1"];
     products.forEach((p, i) => {
-      const price = p.price_cents ? "R$ " + (p.price_cents / 100).toFixed(2).replace(".", ",") : "";
-      const url   = p.checkout_url ?? "#";
+      const price   = p.price_cents ? "R$ " + (p.price_cents / 100).toFixed(2).replace(".", ",") : "";
+      const badge   = p.badge ? `<span class="lockbadge">${p.badge}</span>` : `<span class="lockbadge">🔒 À venda</span>`;
+      const isLocked = p.state === "for_sale";
+      const btnHtml = isLocked
+        ? `<a href="${p.checkout_url ?? "#"}" target="_blank" class="btn" style="text-decoration:none;margin-top:6px">Quero esse 💛</a>`
+        : `<button class="btn green" style="margin-top:6px" onclick="openReader()">📖 Acessar agora</button>`;
       vitrine.innerHTML += `
         <div class="prod">
-          <div class="cover ${covers[i % 3]}">${p.cover_emoji ?? "📦"}<span class="lockbadge">🔒 À venda</span></div>
+          <div class="cover ${covers[i % 3]}">${p.cover_emoji ?? "📦"}${badge}</div>
           <div class="body">
             <h4>${p.name}</h4>
             <div class="desc">${p.description ?? ""}</div>
             ${price ? `<div class="price">${price}</div>` : ""}
-            <a href="${url}" target="_blank" class="btn" style="text-decoration:none;margin-top:6px">Quero esse 💛</a>
+            ${btnHtml}
           </div>
         </div>`;
     });
