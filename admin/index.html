@@ -731,9 +731,10 @@
     document.getElementById("filterResolved").className = "filter-btn" + (filter === "resolved" ? " active" : "");
 
     const grouped = groupMessages();
-    const convs   = Object.entries(grouped).filter(([, msgs]) =>
-      msgs.some(m => m.status === filter)
-    );
+    const convs   = Object.entries(grouped).filter(([, msgs]) => {
+      const hasOpen = msgs.some(m => m.status === "open");
+      return filter === "open" ? hasOpen : !hasOpen;
+    });
 
     const list = document.getElementById("supportList");
 
