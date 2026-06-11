@@ -23,7 +23,7 @@
   .btn.green{background:linear-gradient(180deg,var(--sage),var(--sage-d));color:#fff;box-shadow:0 8px 20px rgba(95,111,86,.35)}
   .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 
-  /* ===== TELAS CENTRALIZADAS (login / definir senha) ===== */
+  /* ===== TELAS CENTRALIZADAS ===== */
   .screen{position:fixed;inset:0;z-index:50;background:radial-gradient(120% 90% at 50% 0%,#fff,var(--cream) 50%,var(--cream-2));display:flex;align-items:center;justify-content:center;padding:24px}
   .screen.hidden{display:none}
   .card{background:var(--white);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);max-width:440px;width:100%;padding:42px 34px;text-align:center}
@@ -44,6 +44,15 @@
 
   .link-btn{background:none;color:var(--sage-d);font-size:13px;font-weight:700;text-decoration:underline;margin-top:14px;display:inline-block}
 
+  /* ===== ONBOARDING ===== */
+  .ob-dots{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
+  .ob-dot{width:10px;height:10px;border-radius:50%;background:var(--line);transition:background .3s}
+  .ob-dot.ob-dot-active{background:var(--sage)}
+  .ob-step h1{font-size:22px;color:var(--sage-d);margin-bottom:8px}
+  .ob-step p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:20px}
+  .ob-btns{display:flex;gap:10px;margin-top:4px}
+  .btn-back{background:var(--cream-2);color:var(--ink);box-shadow:none;flex:0 0 auto;width:auto;padding:13px 20px}
+
   /* ===== APP ===== */
   #app{display:none;max-width:1000px;margin:0 auto;padding:0 20px 60px}
   .topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--line);margin-bottom:28px}
@@ -54,9 +63,9 @@
   .logout-btn{background:none;color:var(--muted);font-size:12px;font-weight:700;text-decoration:underline}
 
   .hello{background:linear-gradient(120deg,var(--sage-d),var(--sage));color:#fff;border-radius:22px;padding:30px 32px;box-shadow:var(--shadow);margin-bottom:34px;position:relative;overflow:hidden}
-  .hello::after{content:"🤱";position:absolute;right:24px;bottom:-10px;font-size:90px;opacity:.18}
   .hello h2{font-size:26px;margin-bottom:8px}
   .hello p{max-width:540px;color:#eef2ea;font-size:15px;line-height:1.6}
+  #helloEmoji{position:absolute;right:24px;bottom:-10px;font-size:90px;opacity:.18;pointer-events:none}
 
   .sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:0 4px 16px}
   .sec-h h3{font-size:22px;color:var(--sage-d)}
@@ -74,6 +83,22 @@
   .prod .desc{font-size:13px;color:var(--muted);line-height:1.45;flex:1}
   .prod .price{font-weight:800;color:var(--sage-d);font-size:15px}
   .prod .btn{font-size:14px;padding:11px 18px}
+
+  /* ===== CHECKLIST ===== */
+  .cl-wrap{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:24px 22px;margin-bottom:40px;box-shadow:var(--shadow)}
+  .cl-bar-bg{background:var(--line);border-radius:99px;height:8px;margin-bottom:22px;overflow:hidden}
+  .cl-bar{background:linear-gradient(90deg,var(--sage-d),var(--sage));height:100%;border-radius:99px;width:0%;transition:width .4s ease}
+  .cl-group-title{font-family:'Fraunces';color:var(--sage-d);font-size:16px;margin:20px 0 10px}
+  .cl-group-title:first-child{margin-top:0}
+  .cl-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer;transition:opacity .2s;user-select:none}
+  .cl-item:last-child{border-bottom:none}
+  .cl-item.checked{opacity:.65}
+  .cl-checkbox{width:22px;height:22px;border-radius:6px;border:2px solid var(--line);flex-shrink:0;display:grid;place-items:center;transition:all .2s;background:var(--cream)}
+  .cl-item.checked .cl-checkbox{background:var(--sage);border-color:var(--sage-d)}
+  .cl-checkmark{color:#fff;font-size:13px;font-weight:800;display:none}
+  .cl-item.checked .cl-checkmark{display:block}
+  .cl-label{font-size:14px;color:var(--ink);line-height:1.4}
+  .cl-item.checked .cl-label{text-decoration:line-through;color:var(--muted)}
 
   footer{text-align:center;color:var(--muted);font-size:12px;padding:24px 0}
   footer b{color:var(--sage-d);font-family:'Fraunces';font-style:italic}
@@ -166,6 +191,75 @@
   </div>
 </div>
 
+<!-- ===== TELA ONBOARDING ===== -->
+<div id="screenOnboarding" class="screen hidden">
+  <div class="card" style="max-width:480px">
+    <div class="logo">🤱</div>
+    <div class="sub">Mundo da Mamãe</div>
+    <div class="ob-dots">
+      <span class="ob-dot ob-dot-active"></span>
+      <span class="ob-dot"></span>
+      <span class="ob-dot"></span>
+      <span class="ob-dot"></span>
+    </div>
+
+    <!-- Passo 1 -->
+    <div id="obStep1" class="ob-step">
+      <h1>Como podemos te chamar?</h1>
+      <p>Um apelido carinhoso para deixar tudo mais especial. 💚</p>
+      <div class="field">
+        <label>Seu apelido</label>
+        <input id="obNickname" type="text" placeholder="Ex: Cá, Rafa, Bê…" maxlength="40" autocomplete="off">
+      </div>
+      <button class="btn green" onclick="obNext(1)">Continuar →</button>
+    </div>
+
+    <!-- Passo 2 -->
+    <div id="obStep2" class="ob-step" style="display:none">
+      <h1>Data da sua última menstruação?</h1>
+      <p>Usaremos para calcular a data prevista do parto. 🗓️</p>
+      <div class="field">
+        <label>Data da última menstruação (DUM)</label>
+        <input id="obDum" type="date">
+      </div>
+      <div class="ob-btns">
+        <button class="btn btn-back" onclick="obBack(2)">← Voltar</button>
+        <button class="btn green" onclick="obNext(2)">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Passo 3 -->
+    <div id="obStep3" class="ob-step" style="display:none">
+      <h1>Quantos meses de gestação?</h1>
+      <p>Isso nos ajuda a confirmar o cálculo da data prevista. 🌱</p>
+      <div class="field">
+        <label>Meses de gestação (0 a 9)</label>
+        <input id="obMonths" type="number" min="0" max="9" placeholder="Ex: 3" step="1">
+      </div>
+      <div class="ob-btns">
+        <button class="btn btn-back" onclick="obBack(3)">← Voltar</button>
+        <button class="btn green" onclick="obNext(3)">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Passo 4 -->
+    <div id="obStep4" class="ob-step" style="display:none">
+      <h1>Qual será o nome do bebê?</h1>
+      <p>Pode ser o nome escolhido, ou "ainda não decidimos" — tudo bem! 🍀</p>
+      <div class="field">
+        <label>Nome do bebê</label>
+        <input id="obBabyName" type="text" placeholder="Ex: Luna, Pedro, ainda não decidimos…" maxlength="60" autocomplete="off">
+      </div>
+      <div class="ob-btns">
+        <button class="btn btn-back" onclick="obBack(4)">← Voltar</button>
+        <button class="btn green" id="obSaveBtn" onclick="obSave()">Entrar no meu espaço →</button>
+      </div>
+    </div>
+
+    <div id="obAlert" class="alert error" style="margin-top:16px"></div>
+  </div>
+</div>
+
 <!-- ===== APP ===== -->
 <div id="app">
   <div class="topbar">
@@ -179,7 +273,8 @@
 
   <div class="hello">
     <h2 id="helloName">Bem-vinda, mamãe! 💚</h2>
-    <p>Que alegria ter você aqui. Esse é o seu cantinho para se preparar com calma e confiança. Comece pela sua <b>Malinha da Maternidade</b> — é só tocar para abrir e virar as páginas como num livro de verdade. 📖</p>
+    <p id="helloParagraph">Que alegria ter você aqui. Esse é o seu cantinho para se preparar com calma e confiança. Comece pela sua <b>Malinha da Maternidade</b> — é só tocar para abrir e virar as páginas como num livro de verdade. 📖</p>
+    <span id="helloEmoji">🤱</span>
   </div>
 
   <div class="sec-h"><h3>📚 Meus produtos</h3><span>Acesso liberado</span></div>
@@ -192,6 +287,16 @@
         <button class="btn green" onclick="openReader()">📖 Ler agora</button>
       </div>
     </div>
+  </div>
+
+  <!-- ===== CHECKLIST ===== -->
+  <div class="sec-h" style="margin-top:8px">
+    <h3>✅ Minha Malinha</h3>
+    <span id="checklistBadge">0 de 0 separados</span>
+  </div>
+  <div class="cl-wrap">
+    <div class="cl-bar-bg"><div class="cl-bar" id="checklistBar"></div></div>
+    <div id="checklistGroups"></div>
   </div>
 
   <div class="sec-h"><h3>✨ Continue se preparando</h3><span>Ofertas para você</span></div>
@@ -238,6 +343,37 @@
   }
 
   let pageFlip = null, pageImages = [];
+  let currentUser = null, userProfile = null;
+  let savePageTimer = null;
+  let checklistState = {};
+
+  // ─── ITENS DO CHECKLIST ────────────────────────────────────
+  const CHECKLIST_ITEMS = [
+    // Mala da Mamãe
+    { key:"mae_docs",        label:"Documentos (RG, cartão do plano, caderneta pré-natal)",  group:"Mala da Mamãe" },
+    { key:"mae_pijama",      label:"Pijama ou camisola (2 peças)",                           group:"Mala da Mamãe" },
+    { key:"mae_sutia",       label:"Sutiã de amamentação (2 peças)",                         group:"Mala da Mamãe" },
+    { key:"mae_absorvente",  label:"Absorvente noturno / pós-parto",                         group:"Mala da Mamãe" },
+    { key:"mae_roupa_saida", label:"Roupa confortável para a saída",                         group:"Mala da Mamãe" },
+    { key:"mae_chinelo",     label:"Chinelo fechado antiderrapante",                         group:"Mala da Mamãe" },
+    { key:"mae_necessaire",  label:"Necessaire com itens de higiene pessoal",                group:"Mala da Mamãe" },
+    { key:"mae_snack",       label:"Lanchinhos e bebidas para o trabalho de parto",          group:"Mala da Mamãe" },
+    // Mala do Bebê
+    { key:"bebe_body",       label:"Bodies (4 peças, tamanho RN e P)",                       group:"Mala do Bebê" },
+    { key:"bebe_macacao",    label:"Macacões (2 peças)",                                     group:"Mala do Bebê" },
+    { key:"bebe_manta",      label:"Manta de malha",                                         group:"Mala do Bebê" },
+    { key:"bebe_toalha",     label:"Toalha de fralda com capuz",                             group:"Mala do Bebê" },
+    { key:"bebe_fralda",     label:"Pacote de fraldas RN",                                   group:"Mala do Bebê" },
+    { key:"bebe_saida",      label:"Roupinha de saída da maternidade",                       group:"Mala do Bebê" },
+    { key:"bebe_meinha",     label:"Meiinhas (3 pares)",                                     group:"Mala do Bebê" },
+    { key:"bebe_touca",      label:"Touca de algodão",                                       group:"Mala do Bebê" },
+    // Acompanhante
+    { key:"ac_roupa",        label:"Roupa confortável (2 trocas)",                           group:"Acompanhante" },
+    { key:"ac_carregador",   label:"Carregador de celular e cabo",                           group:"Acompanhante" },
+    { key:"ac_lanche",       label:"Lanche (barrinhas, biscoito, frutas)",                   group:"Acompanhante" },
+    { key:"ac_docs",         label:"Documentos do acompanhante (RG)",                        group:"Acompanhante" },
+    { key:"ac_travesseiro",  label:"Travesseiro e cobertor (para noite no hospital)",         group:"Acompanhante" },
+  ];
 
   // ─── INICIALIZAÇÃO ─────────────────────────────────────────
   (async () => {
@@ -247,7 +383,6 @@
       return;
     }
 
-    // Detectar ?email= na URL (vindo da Kiwify após compra)
     const urlEmail = new URLSearchParams(window.location.search).get("email");
     if (urlEmail) {
       showSignup(urlEmail);
@@ -255,11 +390,8 @@
       showLogin();
     }
 
-    // onAuthStateChange só trata PASSWORD_RECOVERY (link de reset)
-    // O fluxo normal de login/signup chama checkAccessAndEnter diretamente
     sb.auth.onAuthStateChange(async (event, session) => {
       if (event === "PASSWORD_RECOVERY") {
-        // redireciona para definir-senha se vier de link de reset
         window.location.href = "/definir-senha";
       }
     });
@@ -267,17 +399,19 @@
 
   // ─── VERIFICAR ACESSO ──────────────────────────────────────
   async function checkAccessAndEnter(user) {
-    // Busca por user_id primeiro; fallback por email (caso user_id ainda não foi vinculado)
+    currentUser = user;
+    const cols = "status, product_name, nickname, baby_name, due_date, last_page";
+
     let { data: m } = await sb
       .from("memberships")
-      .select("status, product_name")
+      .select(cols)
       .eq("user_id", user.id)
       .single();
 
     if (!m) {
       const res = await sb
         .from("memberships")
-        .select("status, product_name")
+        .select(cols)
         .eq("email", user.email.toLowerCase())
         .single();
       m = res.data;
@@ -290,22 +424,48 @@
       return;
     }
 
-    enterApp(user);
+    userProfile = m;
+    enterApp(user, m);
   }
 
   // ─── ENTRAR NA PLATAFORMA ──────────────────────────────────
-  async function enterApp(user) {
-    const name  = user.user_metadata?.full_name ?? user.email.split("@")[0];
-    const first = name.split(" ")[0];
-
-    document.getElementById("uname").textContent     = "Olá, " + first;
-    document.getElementById("uav").textContent       = first[0].toUpperCase();
-    document.getElementById("helloName").textContent = "Bem-vinda, " + first + "! 💚";
-
+  async function enterApp(user, profile) {
     hideAllScreens();
-    document.getElementById("app").style.display = "block";
 
-    await loadVitrine();
+    if (!profile?.nickname) {
+      showOnboarding();
+      return;
+    }
+
+    renderDashboard();
+    document.getElementById("app").style.display = "block";
+  }
+
+  // ─── RENDERIZAR PAINEL PERSONALIZADO ──────────────────────
+  async function renderDashboard() {
+    const profile  = userProfile;
+    const nick     = profile.nickname ?? "mamãe";
+    const babyName = profile.baby_name ?? "seu bebê";
+
+    document.getElementById("uname").textContent = "Olá, " + nick;
+    document.getElementById("uav").textContent   = nick[0].toUpperCase();
+    document.getElementById("helloName").textContent = "Bem-vinda, " + nick + "! 💚";
+
+    if (profile.due_date) {
+      const days = calcCountdown(profile.due_date);
+      if (days > 0) {
+        document.getElementById("helloParagraph").innerHTML =
+          `Faltam <b>${days} dia${days !== 1 ? "s" : ""}</b> para conhecer <b>${babyName}</b>. ` +
+          `Aproveite para se preparar com calma — você está indo muito bem! 🌿`;
+        document.getElementById("helloEmoji").textContent = "🤱";
+      } else {
+        document.getElementById("helloParagraph").innerHTML =
+          `Seu bebê já chegou! Parabéns, mamãe! Que essa nova fase seja linda e cheia de amor. 🍼`;
+        document.getElementById("helloEmoji").textContent = "🍼";
+      }
+    }
+
+    await Promise.all([loadVitrine(), loadChecklist()]);
   }
 
   // ─── VITRINE ───────────────────────────────────────────────
@@ -318,7 +478,6 @@
 
     const vitrine = document.getElementById("vitrine");
     vitrine.innerHTML = "";
-
     if (!products?.length) return;
 
     const covers = ["c2", "c3", "c1"];
@@ -336,6 +495,150 @@
           </div>
         </div>`;
     });
+  }
+
+  // ─── CHECKLIST ─────────────────────────────────────────────
+  async function loadChecklist() {
+    const { data } = await sb
+      .from("checklist_progress")
+      .select("item_key, checked")
+      .eq("user_id", currentUser.id);
+
+    checklistState = {};
+    (data ?? []).forEach(row => { checklistState[row.item_key] = row.checked; });
+    renderChecklist();
+  }
+
+  function renderChecklist() {
+    const groups = {};
+    CHECKLIST_ITEMS.forEach(item => {
+      if (!groups[item.group]) groups[item.group] = [];
+      groups[item.group].push(item);
+    });
+
+    const container = document.getElementById("checklistGroups");
+    container.innerHTML = "";
+
+    Object.entries(groups).forEach(([groupName, items]) => {
+      const titleEl = document.createElement("div");
+      titleEl.className = "cl-group-title";
+      titleEl.textContent = groupName;
+      container.appendChild(titleEl);
+
+      items.forEach(item => {
+        const isChecked = !!checklistState[item.key];
+        const el = document.createElement("div");
+        el.className = "cl-item" + (isChecked ? " checked" : "");
+        el.dataset.key = item.key;
+        el.innerHTML = `<div class="cl-checkbox"><span class="cl-checkmark">✓</span></div><span class="cl-label">${item.label}</span>`;
+        el.addEventListener("click", () => toggleChecklistItem(item.key, el));
+        container.appendChild(el);
+      });
+    });
+
+    updateChecklistProgress();
+  }
+
+  async function toggleChecklistItem(key, el) {
+    const newVal = !checklistState[key];
+    checklistState[key] = newVal;
+    el.classList.toggle("checked", newVal);
+    updateChecklistProgress();
+
+    await sb.from("checklist_progress").upsert({
+      user_id:    currentUser.id,
+      item_key:   key,
+      checked:    newVal,
+      checked_at: newVal ? new Date().toISOString() : null,
+    }, { onConflict: "user_id,item_key" });
+  }
+
+  function updateChecklistProgress() {
+    const total   = CHECKLIST_ITEMS.length;
+    const checked = CHECKLIST_ITEMS.filter(i => checklistState[i.key]).length;
+    const pct     = total > 0 ? (checked / total) * 100 : 0;
+    document.getElementById("checklistBar").style.width    = pct + "%";
+    document.getElementById("checklistBadge").textContent  = `${checked} de ${total} separados`;
+  }
+
+  // ─── ONBOARDING ────────────────────────────────────────────
+  function showOnboarding() {
+    hideAllScreens();
+    document.getElementById("screenOnboarding").classList.remove("hidden");
+    document.getElementById("obDum").max = new Date().toISOString().split("T")[0];
+    obSetStep(1);
+  }
+
+  function obSetStep(step) {
+    for (let i = 1; i <= 4; i++) {
+      document.getElementById("obStep" + i).style.display = i === step ? "block" : "none";
+    }
+    document.querySelectorAll(".ob-dot").forEach((d, idx) => {
+      d.classList.toggle("ob-dot-active", idx < step);
+    });
+    clearAlert("obAlert");
+  }
+
+  function obBack(currentStep) { obSetStep(currentStep - 1); }
+
+  function obNext(step) {
+    clearAlert("obAlert");
+    if (step === 1) {
+      if (!document.getElementById("obNickname").value.trim())
+        return showAlert("obAlert", "Como podemos te chamar? Informe um apelido.");
+      obSetStep(2);
+    } else if (step === 2) {
+      if (!document.getElementById("obDum").value)
+        return showAlert("obAlert", "Informe a data da última menstruação.");
+      obSetStep(3);
+    } else if (step === 3) {
+      const v = document.getElementById("obMonths").value;
+      if (v === "" || +v < 0 || +v > 9)
+        return showAlert("obAlert", "Informe os meses de gestação (0 a 9).");
+      obSetStep(4);
+    }
+  }
+
+  async function obSave() {
+    clearAlert("obAlert");
+    const nickname  = document.getElementById("obNickname").value.trim();
+    const dumStr    = document.getElementById("obDum").value;
+    const months    = parseInt(document.getElementById("obMonths").value, 10);
+    const babyName  = document.getElementById("obBabyName").value.trim() || "meu bebê";
+
+    const dueDate = calcDpp(dumStr, months);
+
+    setLoading("obSaveBtn", true);
+    const { error } = await sb.from("memberships").update({
+      nickname,
+      baby_name:        babyName,
+      last_period_date: dumStr,
+      due_date:         dueDate,
+      updated_at:       new Date().toISOString(),
+    }).eq("user_id", currentUser.id);
+    setLoading("obSaveBtn", false);
+
+    if (error) return showAlert("obAlert", "Não foi possível salvar. Tente novamente.");
+
+    userProfile = { ...userProfile, nickname, baby_name: babyName, due_date: dueDate };
+    document.getElementById("screenOnboarding").classList.add("hidden");
+    renderDashboard();
+    document.getElementById("app").style.display = "block";
+  }
+
+  // ─── CÁLCULOS DE GESTAÇÃO ──────────────────────────────────
+  function calcDpp(dumStr, months) {
+    const dum = new Date(dumStr + "T12:00:00");
+    const dpp = new Date(dum);
+    dpp.setDate(dpp.getDate() + 280);
+    return dpp.toISOString().split("T")[0];
+  }
+
+  function calcCountdown(dueDateStr) {
+    const due   = new Date(dueDateStr + "T12:00:00");
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+    return Math.round((due - today) / 86400000);
   }
 
   // ─── LOGIN ─────────────────────────────────────────────────
@@ -381,7 +684,7 @@
       showAlert("forgotAlert", "Não foi possível enviar o e-mail. Tente novamente.");
     } else {
       const el = document.getElementById("forgotAlert");
-      el.className = "alert success show";
+      el.className   = "alert success show";
       el.textContent = "Link enviado! Verifique sua caixa de entrada (e o spam).";
     }
   }
@@ -389,6 +692,10 @@
   // ─── LOGOUT ────────────────────────────────────────────────
   async function doLogout() {
     await sb.auth.signOut();
+    currentUser  = null;
+    userProfile  = null;
+    pageFlip     = null;
+    pageImages   = [];
     document.getElementById("app").style.display = "none";
     showLogin();
   }
@@ -400,13 +707,12 @@
     const pwd2  = document.getElementById("signupPassword2").value;
     clearAlert("signupAlert");
 
-    if (!email)        return showAlert("signupAlert", "Digite seu e-mail.");
-    if (pwd1.length < 6) return showAlert("signupAlert", "A senha precisa ter pelo menos 6 caracteres.");
-    if (pwd1 !== pwd2) return showAlert("signupAlert", "As senhas não conferem.");
+    if (!email)           return showAlert("signupAlert", "Digite seu e-mail.");
+    if (pwd1.length < 6)  return showAlert("signupAlert", "A senha precisa ter pelo menos 6 caracteres.");
+    if (pwd1 !== pwd2)    return showAlert("signupAlert", "As senhas não conferem.");
 
     setLoading("signupBtn", true, "Criando sua conta…");
 
-    // Verificar se já tem membership ativo para esse e-mail
     const { data: m } = await sb.from("memberships").select("status, user_id").eq("email", email.toLowerCase()).single();
 
     if (!m || m.status !== "active") {
@@ -414,7 +720,6 @@
       return showAlert("signupAlert", "Não encontramos uma compra com esse e-mail. Verifique o e-mail usado na compra ou fale com o suporte.");
     }
 
-    // Se já tem user_id, apenas faz login
     if (m.user_id) {
       const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd1 });
       if (error) {
@@ -425,15 +730,12 @@
       return;
     }
 
-    // Criar conta nova
     const { error: signUpError } = await sb.auth.signUp({ email, password: pwd1 });
-
     if (signUpError) {
       setLoading("signupBtn", false, "Criar conta e entrar →");
       return showAlert("signupAlert", "Não foi possível criar a conta. Tente novamente.");
     }
 
-    // Login imediato para ter sessão ativa antes do update
     const { data: loginData, error: loginError } = await sb.auth.signInWithPassword({ email, password: pwd1 });
     setLoading("signupBtn", false, "Criar conta e entrar →");
 
@@ -441,7 +743,6 @@
       return showAlert("signupAlert", "Conta criada! Agora faça login para acessar.");
     }
 
-    // Vincula user_id — agora com sessão ativa, a RLS deixa passar
     await sb.from("memberships")
       .update({ user_id: loginData.user.id, updated_at: new Date().toISOString() })
       .eq("email", email.toLowerCase());
@@ -451,18 +752,12 @@
 
   // ─── NAVEGAÇÃO DE TELAS ────────────────────────────────────
   function hideAllScreens() {
-    document.getElementById("screenLogin").classList.add("hidden");
-    document.getElementById("screenForgot").classList.add("hidden");
-    document.getElementById("screenSignup").classList.add("hidden");
+    ["screenLogin","screenForgot","screenSignup","screenOnboarding"].forEach(id => {
+      document.getElementById(id).classList.add("hidden");
+    });
   }
-  function showLogin() {
-    hideAllScreens();
-    document.getElementById("screenLogin").classList.remove("hidden");
-  }
-  function showForgot() {
-    hideAllScreens();
-    document.getElementById("screenForgot").classList.remove("hidden");
-  }
+  function showLogin()  { hideAllScreens(); document.getElementById("screenLogin").classList.remove("hidden"); }
+  function showForgot() { hideAllScreens(); document.getElementById("screenForgot").classList.remove("hidden"); }
   function showSignup(email) {
     hideAllScreens();
     document.getElementById("screenSignup").classList.remove("hidden");
@@ -480,19 +775,13 @@
     if (pageFlip) { finishReader(); return; }
 
     try {
-      // Buscar Signed URL do Supabase Storage (PDF protegido)
-      const { data, error } = await sb.storage
-        .from("ebooks")
-        .createSignedUrl("malinha.pdf", 60 * 30); // 30 min
-
+      const { data, error } = await sb.storage.from("ebooks").createSignedUrl("malinha.pdf", 60 * 30);
       if (error || !data?.signedUrl) throw new Error("URL não gerada");
-
       const doc = await pdfjsLib.getDocument(data.signedUrl).promise;
       await renderPdf(doc);
     } catch (e) {
       console.warn("Storage indisponível, tentando PDF local:", e);
       try {
-        // Fallback: PDF na mesma pasta (desenvolvimento local)
         const doc = await pdfjsLib.getDocument("../Malinha da Maternidade.pdf").promise;
         await renderPdf(doc);
       } catch (e2) {
@@ -533,9 +822,28 @@
       usePortrait: isMobile,
     });
     pageFlip.loadFromImages(pageImages);
-    pageFlip.on("flip", (e) => updatePg(e.data));
+    pageFlip.on("flip", (e) => {
+      updatePg(e.data);
+      saveLastPage(e.data + 1);
+    });
     finishReader();
-    updatePg(0);
+
+    const savedPage = (userProfile?.last_page ?? 1) - 1;
+    if (savedPage > 0 && savedPage < pageImages.length) {
+      setTimeout(() => pageFlip.flip(savedPage, "top"), 300);
+    }
+    updatePg(savedPage > 0 ? savedPage : 0);
+  }
+
+  function saveLastPage(pageNumber) {
+    clearTimeout(savePageTimer);
+    savePageTimer = setTimeout(async () => {
+      if (!currentUser) return;
+      await sb.from("memberships")
+        .update({ last_page: pageNumber, updated_at: new Date().toISOString() })
+        .eq("user_id", currentUser.id);
+      if (userProfile) userProfile.last_page = pageNumber;
+    }, 1500);
   }
 
   function finishReader() {
@@ -580,7 +888,12 @@
     if (loading) {
       btn.textContent = "Aguarde…";
     } else {
-      const defaults = { loginBtn: "Entrar no meu espaço →", forgotBtn: "Enviar link →", signupBtn: "Criar conta e entrar →" };
+      const defaults = {
+        loginBtn:  "Entrar no meu espaço →",
+        forgotBtn: "Enviar link →",
+        signupBtn: "Criar conta e entrar →",
+        obSaveBtn: "Entrar no meu espaço →",
+      };
       btn.textContent = customText ?? defaults[id] ?? "Continuar →";
     }
   }
