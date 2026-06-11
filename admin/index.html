@@ -667,7 +667,8 @@
         ? `<div class="msg-existing-reply"><strong style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--sage-d)">Sua resposta</strong><br>${escHtml(m.admin_reply)}</div>`
         : "";
       const resolveBtn = m.status === "open"
-        ? `<button class="btn sm" id="resolveBtn-${m.id}" onclick="resolveMessage('${m.id}')">✓ Marcar como resolvido</button>`
+        ? `<button class="btn ghost sm" id="replyBtn-${m.id}" onclick="sendReply('${m.id}')">💬 Enviar resposta</button>
+           <button class="btn sm" id="resolveBtn-${m.id}" onclick="resolveMessage('${m.id}')">✓ Marcar como resolvido</button>`
         : `<span style="font-size:12px;color:var(--muted);font-weight:700">Resolvido</span>`;
 
       return `
@@ -716,6 +717,25 @@
 
     if (error) {
       if (btn) { btn.disabled = false; btn.textContent = "✓ Marcar como resolvido"; }
+      return;
+    }
+
+    await loadSupport();
+  }
+
+  async function sendReply(id) {
+    const reply = document.getElementById("reply-" + id)?.value.trim() ?? "";
+    if (!reply) return;
+    const btn = document.getElementById("replyBtn-" + id);
+    if (btn) { btn.disabled = true; btn.textContent = "Enviando…"; }
+
+    const { error } = await sb.from("support_messages").update({
+      admin_reply: reply,
+      replied_at:  new Date().toISOString(),
+    }).eq("id", id);
+
+    if (error) {
+      if (btn) { btn.disabled = false; btn.textContent = "💬 Enviar resposta"; }
       return;
     }
 
