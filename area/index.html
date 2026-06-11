@@ -111,6 +111,21 @@
   .cl-label{font-size:14px;color:var(--ink);line-height:1.4}
   .cl-item.checked .cl-label{text-decoration:line-through;color:var(--muted)}
 
+  /* ===== CHECKLIST PAGINADO ===== */
+  .cl-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .cl-tab{background:var(--cream-2);border:1.5px solid var(--line);color:var(--ink);font-size:12px;font-weight:800;padding:6px 14px;border-radius:99px;cursor:pointer;transition:all .15s;white-space:nowrap}
+  .cl-tab:hover{background:var(--line)}
+  .cl-tab.active{background:var(--sage);border-color:var(--sage-d);color:#fff}
+  .cl-tab .cl-tab-count{opacity:.7;margin-left:4px;font-weight:600}
+  .cl-page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .cl-group-page-title{font-family:'Fraunces';color:var(--sage-d);font-size:18px;font-weight:700}
+  .cl-group-progress{font-size:13px;color:var(--muted);font-weight:700}
+  .cl-nav{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+  .cl-nav-btn{background:var(--cream-2);color:var(--ink);font-size:13px;font-weight:800;padding:9px 18px;border-radius:99px;cursor:pointer;transition:background .15s}
+  .cl-nav-btn:hover{background:var(--line)}
+  .cl-nav-btn:disabled{opacity:.35;cursor:not-allowed}
+  .cl-page-info{font-size:13px;color:var(--muted);font-weight:700}
+
   /* ===== LOJINHA ===== */
   .construcao-banner{background:linear-gradient(120deg,#fff8ec,#fcefd8);border:1.5px solid var(--gold);border-radius:16px;padding:18px 22px;margin-bottom:28px;display:flex;align-items:center;gap:14px;font-size:14px;font-weight:700;color:var(--ink)}
   .construcao-banner .cb-icon{font-size:26px;flex-shrink:0}
@@ -352,9 +367,23 @@
         <h3>✅ Checklist da Maternidade</h3>
         <span id="checklistBadge">0 de 30 separados</span>
       </div>
+      <!-- Barra geral de progresso -->
+      <div class="cl-bar-bg" style="margin-bottom:20px"><div class="cl-bar" id="checklistBar"></div></div>
+      <!-- Tabs de grupos -->
+      <div id="clTabs" class="cl-tabs"></div>
+      <!-- Página do grupo ativo -->
       <div class="cl-wrap">
-        <div class="cl-bar-bg"><div class="cl-bar" id="checklistBar"></div></div>
+        <div class="cl-page-header">
+          <span id="clGroupName" class="cl-group-page-title"></span>
+          <span id="clGroupProgress" class="cl-group-progress"></span>
+        </div>
         <div id="checklistGroups"></div>
+        <!-- Navegação -->
+        <div class="cl-nav">
+          <button class="cl-nav-btn" id="clPrev" onclick="clChangePage(-1)">‹ Anterior</button>
+          <span id="clPageInfo" class="cl-page-info"></span>
+          <button class="cl-nav-btn" id="clNext" onclick="clChangePage(1)">Próximo ›</button>
+        </div>
       </div>
     </section>
 
@@ -447,6 +476,7 @@
   let savePageTimer = null;
   let checklistState = {};
   let checklistLoaded = false, vitrineLoaded = false;
+  let clCurrentPage = 0;
   let appVisible = false;
 
   // ─── ITENS DO CHECKLIST ────────────────────────────────────
@@ -697,34 +727,69 @@
     renderChecklist();
   }
 
-  function renderChecklist() {
+  function getClGroups() {
     const groups = {};
+    const order  = [];
     CHECKLIST_ITEMS.forEach(item => {
-      if (!groups[item.group]) groups[item.group] = [];
+      if (!groups[item.group]) { groups[item.group] = []; order.push(item.group); }
       groups[item.group].push(item);
     });
+    return order.map(name => ({ name, items: groups[name] }));
+  }
 
+  function renderChecklist() {
+    const groups = getClGroups();
+
+    // Tabs
+    const tabsEl = document.getElementById("clTabs");
+    tabsEl.innerHTML = "";
+    groups.forEach((g, i) => {
+      const checkedCount = g.items.filter(it => checklistState[it.key]).length;
+      const done = checkedCount === g.items.length ? " ✓" : "";
+      const tab  = document.createElement("button");
+      tab.className = "cl-tab" + (i === clCurrentPage ? " active" : "");
+      tab.innerHTML = g.name + `<span class="cl-tab-count">${checkedCount}/${g.items.length}${done}</span>`;
+      tab.onclick = () => clGoTo(i);
+      tabsEl.appendChild(tab);
+    });
+
+    renderClPage();
+    updateChecklistProgress();
+  }
+
+  function renderClPage() {
+    const groups    = getClGroups();
+    const group     = groups[clCurrentPage];
     const container = document.getElementById("checklistGroups");
     container.innerHTML = "";
 
-    Object.entries(groups).forEach(([groupName, items]) => {
-      const titleEl = document.createElement("div");
-      titleEl.className = "cl-group-title";
-      titleEl.textContent = groupName;
-      container.appendChild(titleEl);
-
-      items.forEach(item => {
-        const isChecked = !!checklistState[item.key];
-        const el = document.createElement("div");
-        el.className = "cl-item" + (isChecked ? " checked" : "");
-        el.dataset.key = item.key;
-        el.innerHTML = `<div class="cl-checkbox"><span class="cl-checkmark">✓</span></div><span class="cl-label">${item.label}</span>`;
-        el.addEventListener("click", () => toggleChecklistItem(item.key, el));
-        container.appendChild(el);
-      });
+    group.items.forEach(item => {
+      const isChecked = !!checklistState[item.key];
+      const el = document.createElement("div");
+      el.className = "cl-item" + (isChecked ? " checked" : "");
+      el.dataset.key = item.key;
+      el.innerHTML = `<div class="cl-checkbox"><span class="cl-checkmark">✓</span></div><span class="cl-label">${item.label}</span>`;
+      el.addEventListener("click", () => toggleChecklistItem(item.key, el));
+      container.appendChild(el);
     });
 
-    updateChecklistProgress();
+    const checkedCount = group.items.filter(it => checklistState[it.key]).length;
+    document.getElementById("clGroupName").textContent    = group.name;
+    document.getElementById("clGroupProgress").textContent = checkedCount + " / " + group.items.length + " separados";
+    document.getElementById("clPageInfo").textContent     = (clCurrentPage + 1) + " de " + groups.length;
+    document.getElementById("clPrev").disabled = clCurrentPage === 0;
+    document.getElementById("clNext").disabled = clCurrentPage === groups.length - 1;
+  }
+
+  function clGoTo(index) {
+    clCurrentPage = index;
+    renderChecklist();
+  }
+
+  function clChangePage(delta) {
+    const groups = getClGroups();
+    clCurrentPage = Math.max(0, Math.min(groups.length - 1, clCurrentPage + delta));
+    renderChecklist();
   }
 
   async function toggleChecklistItem(key, el) {
@@ -745,8 +810,26 @@
     const total   = CHECKLIST_ITEMS.length;
     const checked = CHECKLIST_ITEMS.filter(i => checklistState[i.key]).length;
     const pct     = total > 0 ? (checked / total) * 100 : 0;
-    document.getElementById("checklistBar").style.width    = pct + "%";
-    document.getElementById("checklistBadge").textContent  = `${checked} de ${total} separados`;
+    document.getElementById("checklistBar").style.width   = pct + "%";
+    document.getElementById("checklistBadge").textContent = `${checked} de ${total} separados`;
+
+    // Atualiza contadores nas tabs e progresso da página atual
+    const groups = getClGroups();
+    document.querySelectorAll(".cl-tab").forEach((tab, i) => {
+      const g = groups[i];
+      if (!g) return;
+      const c    = g.items.filter(it => checklistState[it.key]).length;
+      const done = c === g.items.length ? " ✓" : "";
+      tab.innerHTML = g.name + `<span class="cl-tab-count">${c}/${g.items.length}${done}</span>`;
+      tab.className = "cl-tab" + (i === clCurrentPage ? " active" : "");
+      tab.onclick   = () => clGoTo(i);
+    });
+
+    const cur = groups[clCurrentPage];
+    if (cur) {
+      const cc = cur.items.filter(it => checklistState[it.key]).length;
+      document.getElementById("clGroupProgress").textContent = cc + " / " + cur.items.length + " separados";
+    }
   }
 
   // ─── ONBOARDING ────────────────────────────────────────────
