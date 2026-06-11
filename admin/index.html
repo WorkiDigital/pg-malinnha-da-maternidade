@@ -660,56 +660,85 @@
     document.getElementById("filterResolved").className = "filter-btn" + (filter === "resolved" ? " active" : "");
 
     const list = document.getElementById("supportList");
-    const msgs = allMessages.filter(m => m.status === filter);
 
-    if (!msgs.length) {
-      list.innerHTML = `<div class="msg-empty">${filter === "open" ? "Nenhuma mensagem em aberto." : "Nenhuma mensagem resolvida ainda."}</div>`;
+    // Agrupa mensagens por user_id (uma conversa por cliente)
+    const grouped = {};
+    allMessages.forEach(m => {
+      const key = m.user_id || m.email;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(m);
+    });
+
+    // Filtra conversas: mostra se tem pelo menos 1 mensagem com o status do filtro
+    const convs = Object.values(grouped).filter(msgs =>
+      msgs.some(m => m.status === filter)
+    );
+
+    if (!convs.length) {
+      list.innerHTML = `<div class="msg-empty">${filter === "open" ? "Nenhuma conversa em aberto." : "Nenhuma conversa resolvida ainda."}</div>`;
       return;
     }
 
-    list.innerHTML = msgs.map(m => {
-      const name    = m.nickname ? `${escHtml(m.nickname)} <span style="font-weight:400;color:var(--muted)">(${escHtml(m.email)})</span>` : escHtml(m.email);
-      const initial = (m.nickname || m.email)[0].toUpperCase();
-      const date    = new Date(m.created_at).toLocaleDateString("pt-BR");
-      const stLabel = m.status === "open" ? "Em aberto" : "Resolvido";
-      const preview = escHtml(m.message.slice(0, 80) + (m.message.length > 80 ? "…" : ""));
+    const fmtTime = (iso) => iso
+      ? new Date(iso).toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" })
+      : "";
 
-      const fmtTime = (iso) => iso
-        ? new Date(iso).toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" })
-        : "";
+    list.innerHTML = convs.map(msgs => {
+      // ordena por data asc dentro da conversa
+      msgs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
-      // bolha da cliente
-      const clientBubble = `
-        <div class="cbubble client">
-          <div class="cb-label">Cliente</div>
-          ${escHtmlNl(m.message)}
-          <div class="cb-time">${fmtTime(m.created_at)}</div>
-        </div>`;
+      const first   = msgs[0];
+      const last    = msgs[msgs.length - 1];
+      const uid     = first.user_id || first.email;
+      const name    = first.nickname
+        ? `${escHtml(first.nickname)} <span style="font-weight:400;color:var(--muted)">(${escHtml(first.email)})</span>`
+        : escHtml(first.email);
+      const initial = (first.nickname || first.email)[0].toUpperCase();
+      const date    = new Date(last.created_at).toLocaleDateString("pt-BR");
 
-      // bolha da resposta (se existir)
-      const adminBubble = m.admin_reply ? `
-        <div class="cbubble admin">
-          <div class="cb-label">Suporte</div>
-          ${escHtmlNl(m.admin_reply)}
-          <div class="cb-time">${fmtTime(m.replied_at)}</div>
-        </div>` : "";
+      // Status geral: aberto se qualquer mensagem estiver aberta
+      const hasOpen  = msgs.some(m => m.status === "open");
+      const stLabel  = hasOpen ? "Em aberto" : "Resolvido";
+      const stClass  = hasOpen ? "open" : "resolved";
+      const preview  = escHtml(last.message.slice(0, 80) + (last.message.length > 80 ? "…" : ""));
 
-      // área de resposta / ações
-      const replyArea = m.status === "open" ? `
+      // Bolhas de toda a conversa
+      const bubbles = msgs.map(m => {
+        const clientBubble = `
+          <div class="cbubble client">
+            <div class="cb-label">Cliente</div>
+            ${escHtmlNl(m.message)}
+            <div class="cb-time">${fmtTime(m.created_at)}</div>
+          </div>`;
+        const adminBubble = m.admin_reply ? `
+          <div class="cbubble admin">
+            <div class="cb-label">Suporte</div>
+            ${escHtmlNl(m.admin_reply)}
+            <div class="cb-time">${fmtTime(m.replied_at)}</div>
+          </div>` : "";
+        return clientBubble + adminBubble;
+      }).join("");
+
+      // Última mensagem sem resposta (para o campo de reply)
+      const lastOpen = [...msgs].reverse().find(m => m.status === "open");
+
+      const replyArea = lastOpen ? `
         <div class="ticket-reply">
-          <textarea id="reply-${m.id}" placeholder="Digite sua resposta…">${escHtml(m.admin_reply ?? "")}</textarea>
+          <textarea id="reply-${lastOpen.id}" placeholder="Digite sua resposta…"></textarea>
           <div class="ticket-reply-btns">
-            <button class="btn ghost sm" id="replyBtn-${m.id}" onclick="sendReply('${m.id}')">💬 Enviar resposta</button>
-            <button class="btn sm"       id="resolveBtn-${m.id}" onclick="resolveMessage('${m.id}')">✓ Resolver</button>
+            <button class="btn ghost sm" id="replyBtn-${lastOpen.id}" onclick="sendReply('${lastOpen.id}')">💬 Enviar resposta</button>
+            <button class="btn sm"       id="resolveBtn-${lastOpen.id}" onclick="resolveMessage('${lastOpen.id}')">✓ Resolver</button>
           </div>
         </div>` : `
         <div style="padding-top:10px;border-top:1px solid var(--line)">
           <span style="font-size:12px;color:var(--sage-d);font-weight:800">✓ Conversa encerrada</span>
         </div>`;
 
+      const ticketId = "ticket-" + uid.replace(/[^a-zA-Z0-9]/g, "_");
+
       return `
-        <div class="ticket" id="ticket-${m.id}">
-          <div class="ticket-header" onclick="toggleTicket('${m.id}')">
+        <div class="ticket" id="${ticketId}">
+          <div class="ticket-header" onclick="this.closest('.ticket').classList.toggle('expanded')">
             <div class="ticket-av">${initial}</div>
             <div class="ticket-info">
               <div class="ticket-name">${name}</div>
@@ -717,15 +746,12 @@
             </div>
             <div class="ticket-right">
               <span class="ticket-date">${date}</span>
-              <span class="ticket-st ${m.status}">${stLabel}</span>
+              <span class="ticket-st ${stClass}">${stLabel}</span>
             </div>
             <span class="ticket-chevron">▼</span>
           </div>
           <div class="ticket-body">
-            <div class="conv-bubbles">
-              ${clientBubble}
-              ${adminBubble}
-            </div>
+            <div class="conv-bubbles">${bubbles}</div>
             ${replyArea}
           </div>
         </div>`;
