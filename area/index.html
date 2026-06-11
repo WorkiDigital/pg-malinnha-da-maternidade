@@ -255,22 +255,35 @@
       showLogin();
     }
 
+    // onAuthStateChange só trata PASSWORD_RECOVERY (link de reset)
+    // O fluxo normal de login/signup chama checkAccessAndEnter diretamente
     sb.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" && session) {
-        await checkAccessAndEnter(session.user);
+      if (event === "PASSWORD_RECOVERY") {
+        // redireciona para definir-senha se vier de link de reset
+        window.location.href = "/definir-senha";
       }
     });
   })();
 
   // ─── VERIFICAR ACESSO ──────────────────────────────────────
   async function checkAccessAndEnter(user) {
-    const { data: m, error } = await sb
+    // Busca por user_id primeiro; fallback por email (caso user_id ainda não foi vinculado)
+    let { data: m } = await sb
       .from("memberships")
       .select("status, product_name")
       .eq("user_id", user.id)
       .single();
 
-    if (error || !m || m.status !== "active") {
+    if (!m) {
+      const res = await sb
+        .from("memberships")
+        .select("status, product_name")
+        .eq("email", user.email.toLowerCase())
+        .single();
+      m = res.data;
+    }
+
+    if (!m || m.status !== "active") {
       await sb.auth.signOut();
       showAlert("loginAlert", "Seu acesso não está ativo. Em caso de dúvidas, fale com o suporte.");
       showLogin();
