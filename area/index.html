@@ -24,7 +24,7 @@
   .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 
   /* ===== TELAS CENTRALIZADAS ===== */
-  .screen{position:fixed;inset:0;z-index:50;background:radial-gradient(120% 90% at 50% 0%,#fff,var(--cream) 50%,var(--cream-2));display:flex;align-items:center;justify-content:center;padding:24px}
+  .screen{position:fixed;inset:0;z-index:55;background:radial-gradient(120% 90% at 50% 0%,#fff,var(--cream) 50%,var(--cream-2));display:flex;align-items:center;justify-content:center;padding:24px}
   .screen.hidden{display:none}
   .card{background:var(--white);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);max-width:440px;width:100%;padding:42px 34px;text-align:center}
   .logo{width:84px;height:84px;border-radius:50%;background:var(--cream-2);border:2px solid var(--blush);display:grid;place-items:center;font-size:42px;margin:0 auto 18px}
@@ -684,7 +684,17 @@
 
   // ─── ONBOARDING ────────────────────────────────────────────
   function showOnboarding() {
-    hideAllScreens();
+    // Se o app já está visível (edição), mostra o onboarding como modal por cima
+    // Se não está logado ainda (primeiro acesso), esconde as telas de auth
+    if (document.getElementById("app").style.display !== "flex") {
+      hideAllScreens();
+    }
+    // Pré-preenche os campos com os dados já salvos (edição)
+    if (userProfile) {
+      document.getElementById("obNickname").value = userProfile.nickname  || "";
+      document.getElementById("obBabyName").value = userProfile.baby_name || "";
+      document.getElementById("obDum").value       = userProfile.last_period_date || "";
+    }
     document.getElementById("screenOnboarding").classList.remove("hidden");
     document.getElementById("obDum").max = new Date().toISOString().split("T")[0];
     obSetStep(1);
@@ -741,10 +751,12 @@
 
     if (error) return showAlert("obAlert", "Não foi possível salvar. Tente novamente.");
 
+    const isEditing = document.getElementById("app").style.display === "flex";
     userProfile = { ...userProfile, nickname, baby_name: babyName, last_period_date: dumStr, due_date: dueDate };
     document.getElementById("screenOnboarding").classList.add("hidden");
     document.getElementById("app").style.display = "flex";
     renderDashboard();
+    if (isEditing) navTo("config");
   }
 
   // ─── CÁLCULOS DE GESTAÇÃO ──────────────────────────────────
