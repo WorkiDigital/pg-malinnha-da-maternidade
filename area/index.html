@@ -137,7 +137,7 @@
   .cfg-row span{color:var(--muted);flex-shrink:0}
   .cfg-row strong{color:var(--ink);text-align:right}
 
-  /* ===== SUPORTE ===== */
+  /* ===== SUPORTE — FAQ ===== */
   .faq-list{margin-bottom:28px}
   .faq-item{border-bottom:1px solid var(--line)}
   .faq-q{width:100%;background:none;text-align:left;padding:15px 4px;font-size:14px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer}
@@ -145,17 +145,40 @@
   .faq-item.open .faq-arrow{transform:rotate(180deg)}
   .faq-a{display:none;padding:0 4px 14px;font-size:13px;color:var(--muted);line-height:1.6}
   .faq-item.open .faq-a{display:block}
-  .support-form textarea{width:100%;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;font-size:14px;font-family:'Nunito';background:var(--cream);color:var(--ink);outline:none;resize:vertical;min-height:110px;transition:border-color .15s}
-  .support-form textarea:focus{border-color:var(--sage)}
-  .support-form label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px}
-  .my-msg-card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px}
-  .my-msg-card .msg-meta{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px;color:var(--muted);font-weight:700}
-  .my-msg-card .msg-status{padding:2px 9px;border-radius:99px;font-size:11px;font-weight:800}
-  .msg-status.open{background:#fff3e0;color:#c47d00}
-  .msg-status.resolved{background:#eef2ea;color:var(--sage-d)}
-  .my-msg-card .msg-text{font-size:14px;color:var(--ink);line-height:1.5;margin-bottom:8px}
-  .my-msg-card .msg-reply{background:var(--cream-2);border-left:3px solid var(--sage);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--ink);line-height:1.5}
-  .my-msg-card .msg-reply-label{font-size:11px;font-weight:800;color:var(--sage-d);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+
+  /* ===== CHAT FLUTUANTE ===== */
+  #chatBtn{position:fixed;bottom:90px;right:20px;z-index:70;width:54px;height:54px;border-radius:50%;background:linear-gradient(180deg,var(--sage),var(--sage-d));color:#fff;font-size:24px;display:none;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(95,111,86,.45);cursor:pointer;border:none;transition:transform .15s}
+  #chatBtn:hover{transform:scale(1.08)}
+  #chatBtn .chat-badge{position:absolute;top:-4px;right:-4px;background:var(--blush-d);color:#fff;font-size:10px;font-weight:800;width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center;border:2px solid var(--white)}
+  #chatWin{position:fixed;bottom:156px;right:20px;z-index:70;width:340px;max-height:520px;background:var(--white);border:1px solid var(--line);border-radius:22px;box-shadow:0 20px 60px rgba(58,58,54,.22);display:none;flex-direction:column;overflow:hidden;transition:opacity .2s,transform .2s}
+  #chatWin.open{display:flex}
+  .chat-header{background:linear-gradient(135deg,var(--sage-d),var(--sage));color:#fff;padding:16px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+  .chat-header-av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:18px;flex-shrink:0}
+  .chat-header-info{flex:1}
+  .chat-header-info strong{font-size:14px;display:block}
+  .chat-header-info span{font-size:11px;opacity:.8}
+  .chat-close{background:none;color:#fff;font-size:20px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+  .chat-close:hover{background:rgba(255,255,255,.15)}
+  .chat-messages{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+  .chat-messages:empty::after{content:"Nenhuma mensagem ainda. Diga olá! 👋";color:var(--muted);font-size:13px;text-align:center;margin:auto;padding:20px 0}
+  .bubble{max-width:82%;padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.5;word-break:break-word}
+  .bubble.mine{background:var(--sage);color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
+  .bubble.mine .bubble-time{font-size:10px;opacity:.7;margin-top:4px;text-align:right}
+  .bubble.theirs{background:var(--cream-2);color:var(--ink);align-self:flex-start;border-bottom-left-radius:6px}
+  .bubble.theirs .bubble-label{font-size:10px;font-weight:800;color:var(--sage-d);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+  .bubble.theirs .bubble-time{font-size:10px;color:var(--muted);margin-top:4px}
+  .bubble-status{font-size:10px;color:var(--muted);text-align:right;margin-top:-4px;padding-right:2px}
+  .bubble-status.resolved{color:var(--sage-d);font-weight:700}
+  .chat-input-wrap{border-top:1px solid var(--line);padding:12px 14px;display:flex;gap:8px;flex-shrink:0;background:var(--white)}
+  .chat-input-wrap textarea{flex:1;padding:10px 12px;border:1.5px solid var(--line);border-radius:14px;font-size:13px;font-family:'Nunito';background:var(--cream);color:var(--ink);outline:none;resize:none;height:42px;transition:border-color .15s;line-height:1.4}
+  .chat-input-wrap textarea:focus{border-color:var(--sage)}
+  .chat-send{background:var(--sage);color:#fff;width:38px;height:38px;border-radius:50%;font-size:18px;display:grid;place-items:center;flex-shrink:0;align-self:flex-end;transition:background .15s}
+  .chat-send:hover{background:var(--sage-d)}
+  .chat-send:disabled{opacity:.5;cursor:not-allowed}
+  @media(max-width:700px){
+    #chatWin{width:calc(100vw - 24px);right:12px;bottom:150px}
+    #chatBtn{bottom:100px;right:14px}
+  }
 
   /* ===== MOBILE BOTTOM NAV ===== */
   @media(max-width:700px){
@@ -455,11 +478,11 @@
 
     <!-- SUPORTE -->
     <section id="sec-suporte" class="sec">
-      <div class="sec-h"><h3>💬 Suporte ao cliente</h3></div>
+      <div class="sec-h"><h3>💬 Suporte</h3></div>
 
       <!-- FAQ -->
       <div class="cfg-card" style="margin-bottom:24px">
-        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">Veja as dúvidas mais frequentes abaixo. Se não encontrar sua resposta, use o formulário para falar conosco.</p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">Veja as dúvidas mais frequentes. Se não encontrar sua resposta, clique no botão de chat para falar com a gente. 💬</p>
         <div class="faq-list">
           <div class="faq-item">
             <button class="faq-q" onclick="toggleFaq(this)">Como acesso minha Malinha? <span class="faq-arrow">▼</span></button>
@@ -475,7 +498,7 @@
           </div>
           <div class="faq-item">
             <button class="faq-q" onclick="toggleFaq(this)">Comprei mas não consigo acessar. O que faço? <span class="faq-arrow">▼</span></button>
-            <div class="faq-a">Use o formulário abaixo para nos falar. Informe o e-mail usado na compra e resolveremos rapidinho!</div>
+            <div class="faq-a">Fale conosco pelo chat aqui ao lado. Informe o e-mail usado na compra e resolveremos rapidinho!</div>
           </div>
           <div class="faq-item">
             <button class="faq-q" onclick="toggleFaq(this)">Como atualizo meus dados pessoais? <span class="faq-arrow">▼</span></button>
@@ -484,23 +507,34 @@
         </div>
       </div>
 
-      <!-- Formulário de mensagem -->
-      <div class="cfg-card support-form" style="margin-bottom:24px">
-        <h4 style="font-family:'Fraunces';color:var(--sage-d);font-size:17px;margin-bottom:12px">Enviar mensagem</h4>
-        <div id="supportSendAlert" class="alert success" style="margin-bottom:12px"></div>
-        <label for="supportMsg">Sua dúvida ou mensagem</label>
-        <textarea id="supportMsg" placeholder="Descreva sua dúvida ou problema…"></textarea>
-        <button class="btn green" id="supportSendBtn" onclick="sendSupportMessage()" style="margin-top:12px">Enviar mensagem</button>
-      </div>
-
-      <!-- Histórico de mensagens do cliente -->
-      <div id="myMessagesWrap" style="display:none">
-        <div class="sec-h" style="margin-bottom:12px"><h3 style="font-size:17px">Minhas mensagens</h3></div>
-        <div id="myMessages"></div>
-      </div>
+      <button class="btn green" onclick="openChat()" style="max-width:260px">💬 Abrir chat de suporte</button>
     </section>
 
   </main>
+</div>
+
+<!-- ===== CHAT FLUTUANTE ===== -->
+<button id="chatBtn" onclick="toggleChat()">
+  💬
+  <span id="chatBadge" class="chat-badge"></span>
+</button>
+
+<div id="chatWin">
+  <div class="chat-header">
+    <div class="chat-header-av">🤱</div>
+    <div class="chat-header-info">
+      <strong>Suporte</strong>
+      <span>Mundo da Mamãe</span>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-input-wrap">
+    <textarea id="chatInput" placeholder="Escreva sua mensagem…" rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatSend()}"
+      oninput="this.style.height='42px';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+    <button class="chat-send" id="chatSendBtn" onclick="chatSend()">➤</button>
+  </div>
 </div>
 
 <!-- ===== READER ===== -->
@@ -1067,6 +1101,10 @@
     vitrineLoaded    = false;
     suporteLoaded    = false;
     checklistState   = {};
+    chatMessages     = [];
+    chatOpen         = false;
+    document.getElementById("chatBtn").style.display = "none";
+    document.getElementById("chatWin").classList.remove("open");
     appVisible       = false;
     document.getElementById("app").style.display = "none";
     showLogin();
@@ -1122,78 +1160,122 @@
     await checkAccessAndEnter(loginData.user);
   }
 
-  // ─── SUPORTE ───────────────────────────────────────────────
+  // ─── SUPORTE / CHAT ────────────────────────────────────────
+  let chatMessages = [];
+  let chatOpen = false;
+
   function toggleFaq(btn) {
     btn.closest(".faq-item").classList.toggle("open");
+  }
+
+  function openChat() {
+    navTo("suporte");
+    setTimeout(() => showChat(), 100);
+  }
+
+  function showChat() {
+    chatOpen = true;
+    document.getElementById("chatWin").classList.add("open");
+    document.getElementById("chatBadge").style.display = "none";
+    document.getElementById("chatInput").focus();
+    scrollChatBottom();
+  }
+
+  function toggleChat() {
+    if (chatOpen) {
+      chatOpen = false;
+      document.getElementById("chatWin").classList.remove("open");
+    } else {
+      showChat();
+    }
   }
 
   async function loadSupportSection() {
     const { data } = await sb
       .from("support_messages")
-      .select("id, message, status, admin_reply, created_at")
+      .select("id, message, status, admin_reply, replied_at, created_at")
       .eq("user_id", currentUser.id)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: true });
 
-    renderMyMessages(data ?? []);
+    chatMessages = data ?? [];
+    renderChat();
+    updateChatBadge();
+
+    // Mostra botão flutuante sempre que o app está visível
+    document.getElementById("chatBtn").style.display = "flex";
   }
 
-  function renderMyMessages(msgs) {
-    const wrap = document.getElementById("myMessagesWrap");
-    const list = document.getElementById("myMessages");
-    if (!msgs.length) { wrap.style.display = "none"; return; }
-
-    wrap.style.display = "block";
-    list.innerHTML = msgs.map(m => {
-      const date = new Date(m.created_at).toLocaleDateString("pt-BR");
-      const statusLabel = m.status === "resolved" ? "Resolvido" : "Em aberto";
-      const replyHtml = m.admin_reply
-        ? `<div class="msg-reply"><div class="msg-reply-label">Resposta</div>${escHtmlArea(m.admin_reply)}</div>`
-        : "";
-      return `
-        <div class="my-msg-card">
-          <div class="msg-meta">
-            <span class="msg-status ${m.status}">${statusLabel}</span>
-            <span>${date}</span>
-          </div>
-          <div class="msg-text">${escHtmlArea(m.message)}</div>
-          ${replyHtml}
-        </div>`;
-    }).join("");
-  }
-
-  async function sendSupportMessage() {
-    const msg = document.getElementById("supportMsg").value.trim();
-    const alertEl = document.getElementById("supportSendAlert");
-    alertEl.className = "alert success";
-    alertEl.style.display = "none";
-
-    if (!msg) {
-      alertEl.className = "alert error show";
-      alertEl.textContent = "Escreva sua mensagem antes de enviar.";
+  function renderChat() {
+    const container = document.getElementById("chatMessages");
+    if (!chatMessages.length) {
+      container.innerHTML = "";
       return;
     }
 
-    setLoading("supportSendBtn", true);
+    container.innerHTML = chatMessages.map(m => {
+      const time = new Date(m.created_at).toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
+      const statusTag = m.status === "resolved"
+        ? `<div class="bubble-status resolved">✓ Resolvido</div>`
+        : `<div class="bubble-status">Em aberto</div>`;
+
+      const replyBubble = m.admin_reply ? `
+        <div class="bubble theirs">
+          <div class="bubble-label">Suporte</div>
+          ${escHtmlArea(m.admin_reply)}
+          <div class="bubble-time">${m.replied_at ? new Date(m.replied_at).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) : ""}</div>
+        </div>` : "";
+
+      return `
+        <div class="bubble mine">
+          ${escHtmlArea(m.message)}
+          <div class="bubble-time">${time}</div>
+        </div>
+        ${statusTag}
+        ${replyBubble}`;
+    }).join("");
+
+    scrollChatBottom();
+  }
+
+  function scrollChatBottom() {
+    const el = document.getElementById("chatMessages");
+    if (el) el.scrollTop = el.scrollHeight;
+  }
+
+  function updateChatBadge() {
+    const hasReply = chatMessages.some(m => m.admin_reply && m.status === "open");
+    const badge = document.getElementById("chatBadge");
+    if (hasReply && !chatOpen) {
+      badge.style.display = "flex";
+      badge.textContent = chatMessages.filter(m => m.admin_reply && m.status === "open").length;
+    } else {
+      badge.style.display = "none";
+    }
+  }
+
+  async function chatSend() {
+    const input = document.getElementById("chatInput");
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    const btn = document.getElementById("chatSendBtn");
+    btn.disabled = true;
+
     const { error } = await sb.from("support_messages").insert({
       user_id:  currentUser.id,
       email:    currentUser.email,
       nickname: userProfile?.nickname ?? null,
       message:  msg,
     });
-    setLoading("supportSendBtn", false);
 
-    if (error) {
-      alertEl.className = "alert error show";
-      alertEl.textContent = "Não foi possível enviar. Tente novamente.";
-      return;
-    }
+    btn.disabled = false;
+    if (error) return;
 
-    document.getElementById("supportMsg").value = "";
-    alertEl.className = "alert success show";
-    alertEl.textContent = "Mensagem enviada! Retornaremos em breve. 💚";
+    input.value = "";
+    input.style.height = "42px";
 
     suporteLoaded = false;
-    loadSupportSection();
+    await loadSupportSection();
     suporteLoaded = true;
   }
 
