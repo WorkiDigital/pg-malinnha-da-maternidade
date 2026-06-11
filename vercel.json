@@ -1,4 +1,10 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/admin",         "destination": "/admin/index.html" },
+    { "source": "/area",          "destination": "/area/index.html" },
+    { "source": "/obrigado",      "destination": "/obrigado/index.html" },
+    { "source": "/definir-senha", "destination": "/definir-senha/index.html" }
+  ]
 }
