@@ -76,13 +76,21 @@
     </div>
   </div>
 
-  <a href="https://pg-malinnha-da-maternidade.vercel.app/area?email={email}" class="btn">
+  <a href="#" id="ctaBtn" class="btn">
     <span>🔐</span> Criar minha senha e acessar agora
   </a>
   <p class="micro">Leva menos de 1 minuto • Acesso imediato e vitalício</p>
 
   <footer>Malinha da Maternidade • <b>Mundo da Mamãe</b> 🤱</footer>
 </div>
+
+<script>
+  // Lê o ?email= que a Kiwify passa na URL de obrigado e injeta no botão
+  const email = new URLSearchParams(window.location.search).get("email");
+  const btn   = document.getElementById("ctaBtn");
+  const base  = "https://pg-malinnha-da-maternidade.vercel.app/area";
+  btn.href    = email ? base + "?email=" + encodeURIComponent(email) : base;
+</script>
 
 </body>
 </html>

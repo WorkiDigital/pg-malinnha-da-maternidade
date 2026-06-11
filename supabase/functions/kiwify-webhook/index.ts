@@ -83,8 +83,8 @@ Deno.serve(async (req) => {
       return new Response("DB error", { status: 500 });
     }
 
-    // Verificar se usuário já existe
-    const { data: existingUsers } = await supabase.auth.admin.listUsers();
+    // Verificar se usuário já existe (busca direta por email)
+    const { data: existingUsers } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
     const existing = existingUsers?.users?.find((u) => u.email?.toLowerCase() === email);
 
     if (existing) {

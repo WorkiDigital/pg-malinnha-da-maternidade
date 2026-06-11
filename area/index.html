@@ -413,18 +413,27 @@
     }
 
     // Criar conta nova
-    const { data, error } = await sb.auth.signUp({ email, password: pwd1 });
-    setLoading("signupBtn", false, "Criar conta e entrar →");
+    const { error: signUpError } = await sb.auth.signUp({ email, password: pwd1 });
 
-    if (error) {
+    if (signUpError) {
+      setLoading("signupBtn", false, "Criar conta e entrar →");
       return showAlert("signupAlert", "Não foi possível criar a conta. Tente novamente.");
     }
 
-    // Vincular user_id ao membership via service (usando anon — membership já existe)
-    if (data.user) {
-      await sb.from("memberships").update({ user_id: data.user.id, updated_at: new Date().toISOString() }).eq("email", email.toLowerCase());
-      await checkAccessAndEnter(data.user);
+    // Login imediato para ter sessão ativa antes do update
+    const { data: loginData, error: loginError } = await sb.auth.signInWithPassword({ email, password: pwd1 });
+    setLoading("signupBtn", false, "Criar conta e entrar →");
+
+    if (loginError || !loginData.user) {
+      return showAlert("signupAlert", "Conta criada! Agora faça login para acessar.");
     }
+
+    // Vincula user_id — agora com sessão ativa, a RLS deixa passar
+    await sb.from("memberships")
+      .update({ user_id: loginData.user.id, updated_at: new Date().toISOString() })
+      .eq("email", email.toLowerCase());
+
+    await checkAccessAndEnter(loginData.user);
   }
 
   // ─── NAVEGAÇÃO DE TELAS ────────────────────────────────────
