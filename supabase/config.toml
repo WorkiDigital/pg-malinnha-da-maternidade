@@ -17,7 +17,7 @@ port = 54323
 [auth]
 enabled = true
 site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://mundodamamae.com.br/definir-senha"]
+additional_redirect_urls = ["https://mundodamamae.com.br/definir-senha", "https://pg-malinnha-da-maternidade.vercel.app/definir-senha"]
 jwt_expiry = 3600
 enable_signup = false        # só via webhook/convite
 email_confirm_required = false
