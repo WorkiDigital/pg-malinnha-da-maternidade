@@ -134,6 +134,35 @@
     #mainContent{padding:20px 16px 80px}
     .inline-fields{grid-template-columns:1fr}
   }
+
+  /* ── SUPORTE ADMIN ── */
+  .sb-notify{background:var(--blush);color:#4a2a20;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:auto}
+  .sb-item.active .sb-notify{background:rgba(255,255,255,.3);color:#fff}
+  .filter-btns{display:flex;gap:8px;margin-bottom:20px}
+  .filter-btn{background:var(--cream-2);border:1.5px solid var(--line);color:var(--ink);font-size:13px;font-weight:800;padding:9px 20px;border-radius:99px;cursor:pointer;transition:all .15s}
+  .filter-btn:hover{background:var(--line)}
+  .filter-btn.active{background:var(--sage);border-color:var(--sage-d);color:#fff}
+  .msg-card{background:var(--white);border:1px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .15s}
+  .msg-card:hover{box-shadow:0 16px 40px rgba(95,111,86,.18)}
+  .msg-card-header{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer}
+  .msg-av{width:38px;height:38px;border-radius:50%;background:var(--sage);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;flex-shrink:0}
+  .msg-info{flex:1;min-width:0}
+  .msg-name{font-size:14px;font-weight:800;color:var(--ink)}
+  .msg-preview{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:360px}
+  .msg-meta-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+  .msg-date{font-size:11px;color:var(--muted);font-weight:700}
+  .msg-st{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800}
+  .msg-st.open{background:#fff3e0;color:#c47d00}
+  .msg-st.resolved{background:#eef2ea;color:var(--sage-d)}
+  .msg-card-body{display:none;padding:0 18px 18px;border-top:1px solid var(--line);margin-top:0}
+  .msg-card.expanded .msg-card-body{display:block}
+  .msg-full-text{font-size:14px;color:var(--ink);line-height:1.6;padding:14px 0;white-space:pre-wrap}
+  .msg-reply-area{margin-top:12px}
+  .msg-reply-area label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+  .msg-reply-area textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:14px;font-family:'Nunito';background:var(--cream);color:var(--ink);outline:none;resize:vertical;min-height:80px;transition:border-color .15s}
+  .msg-reply-area textarea:focus{border-color:var(--sage)}
+  .msg-existing-reply{background:var(--cream-2);border-left:3px solid var(--sage);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--ink);line-height:1.5;margin-bottom:12px;white-space:pre-wrap}
+  .msg-empty{text-align:center;color:var(--muted);padding:48px 16px;font-size:14px}
 </style>
 </head>
 <body>
@@ -165,6 +194,7 @@
       <button class="sb-item active" id="nav-clientes"   onclick="navTo('clientes')">👥 Clientes</button>
       <button class="sb-item"        id="nav-boasvindas" onclick="navTo('boasvindas')">💬 Boas-vindas</button>
       <button class="sb-item"        id="nav-vitrine"    onclick="navTo('vitrine')">🛍️ Vitrine</button>
+      <button class="sb-item"        id="nav-suporte"    onclick="navTo('suporte')">🎧 Suporte <span id="supportBadge" class="sb-notify" style="display:none"></span></button>
       <button class="sb-item"        id="nav-config"     onclick="navTo('config')">⚙️ Configurações</button>
     </nav>
     <div class="sb-footer">
@@ -237,6 +267,17 @@
         <button class="btn" onclick="openProdModal()">+ Novo produto</button>
       </div>
       <div id="prodGrid" class="prod-grid"></div>
+    </section>
+
+    <!-- ── SUPORTE ── -->
+    <section id="sec-suporte" class="sec">
+      <h2 class="page-title">🎧 Suporte ao cliente</h2>
+      <p class="page-sub">Mensagens enviadas pelas clientes pelo painel delas.</p>
+      <div class="filter-btns">
+        <button id="filterOpen"     class="filter-btn active" onclick="renderSupport('open')">Em aberto</button>
+        <button id="filterResolved" class="filter-btn"        onclick="renderSupport('resolved')">Resolvidos</button>
+      </div>
+      <div id="supportList"></div>
     </section>
 
     <!-- ── CONFIG ── -->
@@ -333,6 +374,7 @@
     document.getElementById("adminEmail").textContent = user.email;
     document.getElementById("adminAv").textContent    = user.email[0].toUpperCase();
     navTo("clientes");
+    loadSupportBadgeQuiet();
   }
 
   // ── LOGIN ─────────────────────────────────────────────────
@@ -367,6 +409,7 @@
     if (section === "clientes")   loadMembers();
     if (section === "boasvindas") loadWelcome();
     if (section === "vitrine")    loadProducts();
+    if (section === "suporte")    loadSupport();
     if (section === "config")     loadConfig();
   }
 
@@ -563,6 +606,120 @@
   async function toggleProd(id, currentActive) {
     await sb.from("products").update({ is_active: !currentActive, updated_at: new Date().toISOString() }).eq("id", id);
     loadProducts();
+  }
+
+  // ── SUPORTE ───────────────────────────────────────────────
+  let allMessages = [];
+  let currentFilter = "open";
+
+  async function loadSupportBadgeQuiet() {
+    const { count } = await sb
+      .from("support_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "open");
+    const badge = document.getElementById("supportBadge");
+    if (count > 0) { badge.textContent = count; badge.style.display = ""; }
+    else badge.style.display = "none";
+  }
+
+  async function loadSupport() {
+    const { data } = await sb
+      .from("support_messages")
+      .select("id, email, nickname, message, status, admin_reply, created_at")
+      .order("created_at", { ascending: false });
+
+    allMessages = data ?? [];
+    updateSupportBadge();
+    renderSupport(currentFilter);
+  }
+
+  function updateSupportBadge() {
+    const badge = document.getElementById("supportBadge");
+    const count = allMessages.filter(m => m.status === "open").length;
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = "";
+    } else {
+      badge.style.display = "none";
+    }
+  }
+
+  function renderSupport(filter) {
+    currentFilter = filter;
+    document.getElementById("filterOpen").className     = "filter-btn" + (filter === "open"     ? " active" : "");
+    document.getElementById("filterResolved").className = "filter-btn" + (filter === "resolved" ? " active" : "");
+
+    const list = document.getElementById("supportList");
+    const msgs = allMessages.filter(m => m.status === filter);
+
+    if (!msgs.length) {
+      list.innerHTML = `<div class="msg-empty">${filter === "open" ? "Nenhuma mensagem em aberto." : "Nenhuma mensagem resolvida ainda."}</div>`;
+      return;
+    }
+
+    list.innerHTML = msgs.map(m => {
+      const name     = m.nickname ? `${escHtml(m.nickname)} (${escHtml(m.email)})` : escHtml(m.email);
+      const initial  = (m.nickname || m.email)[0].toUpperCase();
+      const date     = new Date(m.created_at).toLocaleDateString("pt-BR");
+      const stLabel  = m.status === "open" ? "Em aberto" : "Resolvido";
+      const preview  = escHtml(m.message.slice(0, 90) + (m.message.length > 90 ? "…" : ""));
+      const replyHtml = m.admin_reply
+        ? `<div class="msg-existing-reply"><strong style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--sage-d)">Sua resposta</strong><br>${escHtml(m.admin_reply)}</div>`
+        : "";
+      const resolveBtn = m.status === "open"
+        ? `<button class="btn sm" id="resolveBtn-${m.id}" onclick="resolveMessage('${m.id}')">✓ Marcar como resolvido</button>`
+        : `<span style="font-size:12px;color:var(--muted);font-weight:700">Resolvido</span>`;
+
+      return `
+        <div class="msg-card" id="msgcard-${m.id}">
+          <div class="msg-card-header" onclick="toggleMessage('${m.id}')">
+            <div class="msg-av">${initial}</div>
+            <div class="msg-info">
+              <div class="msg-name">${name}</div>
+              <div class="msg-preview">${preview}</div>
+            </div>
+            <div class="msg-meta-right">
+              <span class="msg-date">${date}</span>
+              <span class="msg-st ${m.status}">${stLabel}</span>
+            </div>
+          </div>
+          <div class="msg-card-body">
+            <div class="msg-full-text">${escHtml(m.message)}</div>
+            ${replyHtml}
+            <div class="msg-reply-area">
+              <label>Resposta (opcional)</label>
+              <textarea id="reply-${m.id}" placeholder="Digite uma resposta para a cliente…">${escHtml(m.admin_reply ?? "")}</textarea>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+              ${resolveBtn}
+            </div>
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  function toggleMessage(id) {
+    const card = document.getElementById("msgcard-" + id);
+    card.classList.toggle("expanded");
+  }
+
+  async function resolveMessage(id) {
+    const reply = document.getElementById("reply-" + id)?.value.trim() ?? "";
+    const btn = document.getElementById("resolveBtn-" + id);
+    if (btn) { btn.disabled = true; btn.textContent = "Salvando…"; }
+
+    const { error } = await sb.from("support_messages").update({
+      status:      "resolved",
+      admin_reply: reply || null,
+      replied_at:  reply ? new Date().toISOString() : null,
+    }).eq("id", id);
+
+    if (error) {
+      if (btn) { btn.disabled = false; btn.textContent = "✓ Marcar como resolvido"; }
+      return;
+    }
+
+    await loadSupport();
   }
 
   // ── CONFIGURAÇÕES ─────────────────────────────────────────
