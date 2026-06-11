@@ -103,8 +103,33 @@
 </head>
 <body>
 
+<!-- ===== TELA CRIAR CONTA (vindo da Kiwify) ===== -->
+<div id="screenSignup" class="screen hidden">
+  <div class="card">
+    <div class="logo">🤱</div>
+    <div class="sub">Mundo da Mamãe</div>
+    <h1>Criar sua senha</h1>
+    <p>Sua compra foi confirmada! 💚 Crie uma senha para acessar o Espaço da Maternidade sempre que quiser.</p>
+    <div id="signupAlert" class="alert error"></div>
+    <div class="field">
+      <label>E-mail da compra</label>
+      <input id="signupEmail" type="email" placeholder="seu@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Criar senha</label>
+      <input id="signupPassword" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+    </div>
+    <div class="field">
+      <label>Confirmar senha</label>
+      <input id="signupPassword2" type="password" placeholder="Repita a senha" autocomplete="new-password">
+    </div>
+    <button class="btn green" id="signupBtn" onclick="doSignup()">Criar conta e entrar →</button>
+    <button class="link-btn" onclick="showLogin()">Já tenho conta</button>
+  </div>
+</div>
+
 <!-- ===== TELA DE LOGIN ===== -->
-<div id="screenLogin" class="screen">
+<div id="screenLogin" class="screen hidden">
   <div class="card">
     <div class="logo">🤱</div>
     <div class="sub">Mundo da Mamãe</div>
@@ -219,8 +244,17 @@
     const { data: { session } } = await sb.auth.getSession();
     if (session) {
       await checkAccessAndEnter(session.user);
+      return;
     }
-    // Escuta mudanças de sessão (convite / reset de senha)
+
+    // Detectar ?email= na URL (vindo da Kiwify após compra)
+    const urlEmail = new URLSearchParams(window.location.search).get("email");
+    if (urlEmail) {
+      showSignup(urlEmail);
+    } else {
+      showLogin();
+    }
+
     sb.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session) {
         await checkAccessAndEnter(session.user);
@@ -346,18 +380,71 @@
     showLogin();
   }
 
+  // ─── CRIAR CONTA (vindo da Kiwify) ────────────────────────
+  async function doSignup() {
+    const email = document.getElementById("signupEmail").value.trim();
+    const pwd1  = document.getElementById("signupPassword").value;
+    const pwd2  = document.getElementById("signupPassword2").value;
+    clearAlert("signupAlert");
+
+    if (!email)        return showAlert("signupAlert", "Digite seu e-mail.");
+    if (pwd1.length < 6) return showAlert("signupAlert", "A senha precisa ter pelo menos 6 caracteres.");
+    if (pwd1 !== pwd2) return showAlert("signupAlert", "As senhas não conferem.");
+
+    setLoading("signupBtn", true, "Criando sua conta…");
+
+    // Verificar se já tem membership ativo para esse e-mail
+    const { data: m } = await sb.from("memberships").select("status, user_id").eq("email", email.toLowerCase()).single();
+
+    if (!m || m.status !== "active") {
+      setLoading("signupBtn", false, "Criar conta e entrar →");
+      return showAlert("signupAlert", "Não encontramos uma compra com esse e-mail. Verifique o e-mail usado na compra ou fale com o suporte.");
+    }
+
+    // Se já tem user_id, apenas faz login
+    if (m.user_id) {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd1 });
+      if (error) {
+        setLoading("signupBtn", false, "Criar conta e entrar →");
+        return showAlert("signupAlert", "Esse e-mail já tem uma conta. Use a tela de login ou recupere sua senha.");
+      }
+      await checkAccessAndEnter(data.user);
+      return;
+    }
+
+    // Criar conta nova
+    const { data, error } = await sb.auth.signUp({ email, password: pwd1 });
+    setLoading("signupBtn", false, "Criar conta e entrar →");
+
+    if (error) {
+      return showAlert("signupAlert", "Não foi possível criar a conta. Tente novamente.");
+    }
+
+    // Vincular user_id ao membership via service (usando anon — membership já existe)
+    if (data.user) {
+      await sb.from("memberships").update({ user_id: data.user.id, updated_at: new Date().toISOString() }).eq("email", email.toLowerCase());
+      await checkAccessAndEnter(data.user);
+    }
+  }
+
   // ─── NAVEGAÇÃO DE TELAS ────────────────────────────────────
   function hideAllScreens() {
     document.getElementById("screenLogin").classList.add("hidden");
     document.getElementById("screenForgot").classList.add("hidden");
+    document.getElementById("screenSignup").classList.add("hidden");
   }
   function showLogin() {
+    hideAllScreens();
     document.getElementById("screenLogin").classList.remove("hidden");
-    document.getElementById("screenForgot").classList.add("hidden");
   }
   function showForgot() {
+    hideAllScreens();
     document.getElementById("screenForgot").classList.remove("hidden");
-    document.getElementById("screenLogin").classList.add("hidden");
+  }
+  function showSignup(email) {
+    hideAllScreens();
+    document.getElementById("screenSignup").classList.remove("hidden");
+    if (email) document.getElementById("signupEmail").value = decodeURIComponent(email);
   }
 
   // ─── READER ────────────────────────────────────────────────
@@ -465,10 +552,15 @@
     el.className   = "alert error";
     el.textContent = "";
   }
-  function setLoading(id, loading) {
-    const btn      = document.getElementById(id);
-    btn.disabled   = loading;
-    btn.textContent = loading ? "Aguarde…" : (id === "loginBtn" ? "Entrar no meu espaço →" : "Enviar link →");
+  function setLoading(id, loading, customText) {
+    const btn = document.getElementById(id);
+    btn.disabled = loading;
+    if (loading) {
+      btn.textContent = "Aguarde…";
+    } else {
+      const defaults = { loginBtn: "Entrar no meu espaço →", forgotBtn: "Enviar link →", signupBtn: "Criar conta e entrar →" };
+      btn.textContent = customText ?? defaults[id] ?? "Continuar →";
+    }
   }
 </script>
 </body>

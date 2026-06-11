@@ -1,3 +1,24 @@
+# Fluxo Alternativo — Acesso Direto pelo Link (sem e-mail)
+
+> Implementado como fluxo principal enquanto não há domínio verificado no Resend.
+
+## Como funciona
+
+1. Cliente compra na Kiwify
+2. Kiwify redireciona para `seusite.com/area?email=EMAIL_DO_CLIENTE` (configurar no campo "URL de obrigado" da Kiwify)
+3. Cliente cai direto na tela de **criar conta** com o e-mail já preenchido
+4. Define a senha e entra automaticamente na plataforma
+
+## Configurar na Kiwify
+
+Em Kiwify → Produto → **URL de obrigado (thank you page)**:
+```
+https://pg-malinnha-da-maternidade.vercel.app/area?email={email}
+```
+O `{email}` é a variável dinâmica que a Kiwify substitui pelo e-mail do comprador.
+
+---
+
 # Integração Resend — E-mail HTML Mundo da Mamãe
 
 > Quando tiver um domínio verificado no Resend, seguir este guia para ativar os e-mails em HTML.
