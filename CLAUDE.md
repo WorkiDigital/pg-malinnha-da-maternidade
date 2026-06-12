@@ -99,6 +99,23 @@ Plataforma de produto digital vendendo a **Malinha da Maternidade** (checklist P
 
 ---
 
+## Imagens (`/img`)
+
+Pasta `img/` na raiz com ilustrações digitais no estilo **kawaii-adjacent brasileiro** (aquarela suave, paleta cream/blush/sage). Geradas por IA com prompts específicos para o nicho de maternidade.
+
+| Arquivo | Onde é usado | Status |
+|---|---|---|
+| `hero-mockup-malinha.jpg` | `/` — abaixo do botão CTA no hero | ativo |
+| `mae-ansiosa-lista.jpg` | `/` — lado direito da seção "Você reconhece essa cena?" | ativo |
+| `preview-checklist-dispositivos.jpg` | `/` — seção do produto | **removido** (não agregou experiência) |
+| `mae-tranquila-mala-pronta.jpg` | `/` — lado direito da seção de benefícios | ativo |
+| `ornamento-botanico.png` | `/area` — decorativo no card `.hello` de boas-vindas | ativo |
+| `flatlay-mala-pronta.jpg` | `/obrigado` — topo do card pós-compra | ativo |
+
+**Estilo dos prompts:** digital illustration, soft watercolor, kawaii-adjacent, Brazilian maternity planner style, paleta `#fdf8f2` cream / `#7a8b6f` sage / `#e9b8a8` blush / `#b56e5a` dusty rose. Sem fotografia real.
+
+---
+
 ## Edge Function — kiwify-webhook
 
 - Secrets necessários: `KIWIFY_WEBHOOK_SECRET`, `RESEND_API_KEY`, `APP_URL`
