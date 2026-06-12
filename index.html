@@ -138,6 +138,21 @@ fbq('track', 'PageView');
   .final p{color:#eef2ea;max-width:560px;margin:0 auto 30px}
   footer{text-align:center;padding:30px 22px;color:var(--muted);font-size:.82rem;background:var(--cream)}
 
+  /* IMAGENS */
+  .hero-img{display:block;margin:32px auto 0;max-width:540px;width:100%;border-radius:22px;box-shadow:var(--shadow)}
+  .problem-wrap{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+  .problem-img{width:100%;border-radius:18px;box-shadow:var(--shadow)}
+  .problem-text{display:flex;flex-direction:column;gap:0}
+  .product-img{display:block;margin:0 auto 28px;max-width:500px;width:100%;border-radius:18px;box-shadow:var(--shadow)}
+  .benefits-wrap{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
+  .benefits-img{width:100%;border-radius:18px;box-shadow:var(--shadow)}
+
+  @media(max-width:620px){
+    .problem-wrap{grid-template-columns:1fr}
+    .problem-img{max-width:360px;margin:0 auto}
+    .benefits-wrap{grid-template-columns:1fr}
+    .benefits-img{max-width:360px;margin:0 auto}
+  }
   @media(max-width:560px){
     .grid{grid-template-columns:1fr}
     .price-box .tag{display:none}
@@ -155,6 +170,7 @@ fbq('track', 'PageView');
     <p class="sub">O checklist definitivo com tudo o que você, seu bebê e seu acompanhante precisam levar para a maternidade. Item por item, na quantidade certa, sem stress e sem gastar à toa.</p>
     <a href="https://pay.kiwify.com.br/3TU0Lm8" class="cta">👉 Quero minha malinha pronta agora</a>
     <span class="micro">Pagamento único • Use no celular ou impresso</span>
+    <img src="img/hero-mockup-malinha.jpg" alt="Malinha da Maternidade — checklist completo" class="hero-img">
   </div>
 </header>
 
@@ -163,16 +179,21 @@ fbq('track', 'PageView');
   <div class="wrap">
     <h2>Você reconhece essa cena?</h2>
     <p class="lead">Faltam poucas semanas (ou dias) e bate aquele frio na barriga que não é a contração.</p>
-    <div class="quote">"Será que já comprei tudo? Será que estou esquecendo algo importante? E se a bolsa estourar de madrugada e eu sair correndo com a mala pela metade?"</div>
-    <p style="text-align:center;color:var(--muted);max-width:600px;margin:0 auto">Você vê 50 listas diferentes na internet, cada uma fala uma coisa. Pede palpite e vem opinião demais. Resultado: compra <b>o que não usa</b>, esquece <b>o essencial</b> e gasta um dinheiro que faz falta com o bebê chegando.</p>
-    <p style="text-align:center;font-family:'Fraunces';font-size:1.25rem;color:var(--sage-d);margin-top:26px">Montar a malinha não precisa ser um parto antes do parto.</p>
+    <div class="problem-wrap">
+      <div class="problem-text">
+        <div class="quote">"Será que já comprei tudo? Será que estou esquecendo algo importante? E se a bolsa estourar de madrugada e eu sair correndo com a mala pela metade?"</div>
+        <p style="color:var(--muted)">Você vê 50 listas diferentes na internet, cada uma fala uma coisa. Pede palpite e vem opinião demais. Resultado: compra <b>o que não usa</b>, esquece <b>o essencial</b> e gasta um dinheiro que faz falta com o bebê chegando.</p>
+        <p style="font-family:'Fraunces';font-size:1.15rem;color:var(--sage-d);margin-top:20px">Montar a malinha não precisa ser um parto antes do parto.</p>
+      </div>
+      <img src="img/mae-ansiosa-lista.jpg" alt="Mãe gestante preocupada com a lista" class="problem-img">
+    </div>
   </div>
 </section>
 
 <!-- PRODUCT / CHECKLIST -->
 <section class="alt">
   <div class="wrap">
-    <span class="emoji" style="text-align:center;display:block">🎒</span>
+    <img src="img/preview-checklist-dispositivos.jpg" alt="Preview do checklist digital da Malinha da Maternidade" class="product-img">
     <h2>Apresentando a Malinha da Maternidade</h2>
     <p class="lead">Um guia prático e direto ao ponto com o checklist completo — separado por categoria, na quantidade certa, sem exagero e sem furo. Você imprime ou usa no celular, vai marcando, e resolve numa única tarde.</p>
     <div class="grid">
@@ -190,12 +211,15 @@ fbq('track', 'PageView');
   <div class="wrap">
     <h2>Por que vale cada centavo</h2>
     <p class="lead">Mais do que uma lista: é a sua paz de espírito na reta final.</p>
-    <ul class="benefits">
-      <li><span class="dot">🟢</span><span><b>Tranquilidade.</b> Você para de sentir que está esquecendo algo. Está tudo na lista.</span></li>
-      <li><span class="dot">💰</span><span><b>Economia.</b> Para de comprar item que não serve e foca só no que vai usar — economiza muito mais que o preço do guia.</span></li>
-      <li><span class="dot">⏱️</span><span><b>Tempo.</b> Resolve em uma tarde o que ia consumir semanas de pesquisa e ansiedade.</span></li>
-      <li><span class="dot">💚</span><span><b>Confiança.</b> Quando a hora chegar, você pega a mala já pronta e vai. Sem correria, sem pânico.</span></li>
-    </ul>
+    <div class="benefits-wrap">
+      <ul class="benefits">
+        <li><span class="dot">🟢</span><span><b>Tranquilidade.</b> Você para de sentir que está esquecendo algo. Está tudo na lista.</span></li>
+        <li><span class="dot">💰</span><span><b>Economia.</b> Para de comprar item que não serve e foca só no que vai usar — economiza muito mais que o preço do guia.</span></li>
+        <li><span class="dot">⏱️</span><span><b>Tempo.</b> Resolve em uma tarde o que ia consumir semanas de pesquisa e ansiedade.</span></li>
+        <li><span class="dot">💚</span><span><b>Confiança.</b> Quando a hora chegar, você pega a mala já pronta e vai. Sem correria, sem pânico.</span></li>
+      </ul>
+      <img src="img/mae-tranquila-mala-pronta.jpg" alt="Mãe tranquila com a mala da maternidade pronta" class="benefits-img">
+    </div>
   </div>
 </section>
 
